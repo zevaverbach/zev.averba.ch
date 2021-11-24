@@ -1,30 +1,15 @@
-"""
-TODO:
-    - [x] programmatically push to github whenever the db changes
-    - [x] in SQL format!
-      - [ ] this works when manually committing but not programmatically
-        - tried copying .gitattributes to /etc/ and /home/.config 
-        - asked for help here
-            - https://stackoverflow.com/questions/70016351/why-dont-my-git-clean-and-smudge-filters-work-when-committing-programmatically
-            - https://twitter.com/zevav/status/1461244302529597442
-"""
 import logging
-import os
-import sqlite3
-import subprocess as sp
 import sys
 from uuid import uuid4
 
 from dotenv import load_dotenv
 from flask import Flask, request, render_template
-import sqlalchemy
-from sqlalchemy import create_engine as ce, Table, Column, Integer, String, MetaData
+
+from db import do_query, create_engine, push_refreshed_db
 
 load_dotenv()
 
 ENGINE = None
-CONSTR = os.getenv("DB_CONNECTION_STRING")
-DB_PATH = os.getenv("DB_PATH")
 PAGE_VERSION = "0.0.1"
 URL = "https://zev.averba.ch"
 DEFAULT_CONTENT = {
@@ -41,71 +26,6 @@ app.logger.setLevel(logging.DEBUG)
 @app.context_processor
 def inject_globals():
     return dict(SITE_URL=URL)
-
-
-def create_engine():
-    global ENGINE
-    ENGINE = ENGINE or ce(CONSTR)
-    return ENGINE
-
-
-md = MetaData()
-Content = Table(
-    "content",
-    md,
-    Column("uid", String, primary_key=True),
-    Column("page_version", String),
-    Column("heading", String),
-    Column("body", String),
-)
-
-
-def do_query(query: str):
-    global ENGINE
-    ENGINE = ENGINE or create_engine()
-    try:
-        return [dict(i) for i in ENGINE.execute(query)]
-    except sqlalchemy.exc.ResourceClosedError:
-        return
-
-
-def create_tables():
-    global ENGINE
-    ENGINE = ENGINE or ce(CONSTR)
-    md.create_all(ENGINE)
-
-
-def drop_tables():
-    global ENGINE
-    ENGINE = ENGINE or ce(CONSTR)
-    md.drop_all(ENGINE)
-
-
-def _reset():
-    drop_tables()
-    create_tables()
-
-
-def _init():
-    conn = sqlite3.connect(DB_PATH)
-    conn.close()
-    create_tables()
-
-
-def push_refreshed_db():
-    app.logger.debug(
-        sp.check_output("git add /home/listenandtype/listenandtype/db.db", shell=True)
-    )
-    try:
-        app.logger.debug(
-            sp.check_output(
-                "git commit -m 'update db'",
-                shell=True,
-            )
-        )
-        app.logger.debug(sp.check_output("git push origin master", shell=True))
-    except Exception as e:
-        app.logger.debug(str(e))
 
 
 @app.route("/favicon.ico")

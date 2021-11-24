@@ -1,3 +1,3 @@
-from application import _init
+from db import _init
 
 _init()

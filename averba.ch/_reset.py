@@ -1,3 +1,3 @@
-from application import _reset
+from db import _reset
 
 _reset()
