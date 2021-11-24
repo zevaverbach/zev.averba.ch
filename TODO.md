@@ -1,0 +1,5 @@
+- [ ] generate sitemap
+- [ ] detect similar or duplicate pages and disallow it, it fucks up SEO
+- [ ] web standard validator programmatically?
+- [ ] make site responsive
+- [ ] canonical link

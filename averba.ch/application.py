@@ -27,11 +27,20 @@ CONSTR = os.getenv("DB_CONNECTION_STRING")
 DB_PATH = os.getenv("DB_PATH")
 PAGE_VERSION = "0.0.1"
 URL = "https://zev.averba.ch"
-DEFAULT_CONTENT = {"page_version": PAGE_VERSION, "body": "<h1>Zev Averbach</h1>"}
+DEFAULT_CONTENT = {
+    "page_version": PAGE_VERSION,
+    "body": "<h1>Zev Averbach</h1>",
+    "fathom_uid": "LWJFWQJS",
+}
 
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
+
+
+@app.context_processor
+def inject_globals():
+    return dict(SITE_URL=URL)
 
 
 def create_engine():
@@ -84,7 +93,9 @@ def _init():
 
 
 def push_refreshed_db():
-    app.logger.debug(sp.check_output("git add /home/listenandtype/listenandtype/db.db", shell=True))
+    app.logger.debug(
+        sp.check_output("git add /home/listenandtype/listenandtype/db.db", shell=True)
+    )
     try:
         app.logger.debug(
             sp.check_output(
@@ -118,6 +129,15 @@ def page(path):
             return "no content!", 400
 
     return render_template(f"page_{content['page_version']}.html", **content)
+
+
+def get_content(uid):
+    global ENGINE
+    ENGINE = ENGINE or create_engine()
+    result = ENGINE.execute(f"select * from content where uid = '{uid}'")
+    if not result.returns_rows:
+        raise NoContent
+    return [{**dict(r), **{"fathom_uid": "LWJFWQJS"}} for r in result][0]
 
 
 @app.route("/create", methods=["POST"])
@@ -169,15 +189,6 @@ def create_page():
     )
     push_refreshed_db()
     return f"{URL}/{uid}", 200
-
-
-def get_content(uid):
-    global ENGINE
-    ENGINE = ENGINE or create_engine()
-    result = ENGINE.execute(f"select * from content where uid = '{uid}'")
-    if not result.returns_rows:
-        raise NoContent
-    return [{**dict(r), **{"fathom_uid": "IGNJNVZJ"}} for r in result][0]
 
 
 class NoContent(Exception):
