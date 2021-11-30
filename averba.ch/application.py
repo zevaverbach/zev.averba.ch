@@ -163,7 +163,10 @@ def render_all_updated_pages(url=None):
 
 def update_static_files():
     for f in Path("static").iterdir():
-        public_path = Path(RENDERED_PUBLIC_FILES_PATH) / "static" / f.name
+        if f.name == "robots.txt":
+            public_path = Path(RENDERED_PUBLIC_FILES_PATH) / f.name
+        else: 
+            public_path = Path(RENDERED_PUBLIC_FILES_PATH) / "static" / f.name
         try:
             with f.open() as fin, public_path.open() as public_fin:
                 if fin.read() != public_fin.read():
