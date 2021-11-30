@@ -1,0 +1,12 @@
+[Unit]
+Description=averba.ch.service - A Flask application run with Gunicorn.
+After=network.target
+
+[Service]
+User=zev
+Group=www-data
+WorkingDirectory=/home/averba.ch/averba.ch/averba.ch
+ExecStart=/home/averba.ch/averba.ch/env/bin/gunicorn --workers 3 --error-logfile /home/averba.ch/averba.ch/error.log --access-logfile /home/averba.ch/averba.ch/access.log --bind unix:/home/averba.ch/averba.ch.sock -m 770 wsgi:app
+
+[Install]
+WantedBy=multi-user.target

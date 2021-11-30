@@ -67,4 +67,7 @@ def _init():
 
 def push_refreshed_db():
     sp.check_output(f"git add {DB_PATH}", shell=True)
-    sp.check_output("git commit -m 'update db'", shell=True)
+    try:
+        sp.check_output("git commit -m 'update db'", shell=True)
+    except sp.CalledProcessError:
+        pass

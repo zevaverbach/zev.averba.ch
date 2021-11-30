@@ -1,8 +1,13 @@
 import logging
+import os
+from pathlib import Path
+import shutil
+import subprocess
 import sys
 
 from dotenv import load_dotenv
 from flask import Flask, request, render_template
+from jinja2 import Template
 
 from db import do_query, create_engine, push_refreshed_db
 
@@ -13,6 +18,7 @@ BASE_URL = "https://zev.averba.ch"
 FATHOM_UID = "LWJFWQJS"
 THEME_COLOR = "#209cee"
 DEFAULT_PAGE_TYPE = "0.0.1"
+RENDERED_PUBLIC_FILES_PATH = f"/var/www/{BASE_URL.split('/')[-1]}/html"
 
 DEFAULT_CONTENT = {
     "page_type": DEFAULT_PAGE_TYPE,
@@ -63,17 +69,26 @@ def get_content(url):
 
 
 def update_sitemap():
-    # TODO: implement this using sitemap-generator-cli, and upload to Google
-    pass
+    subprocess.call(
+        f"sitemap-generator {BASE_URL} --filepath {os.getenv('SITEMAP_PATH')}", shell=True
+    )
 
 
 @app.route("/create", methods=["POST"])
 def create_page():
+    payload = request.get_json()
+    return handle_create_page(payload)
+
+
+def handle_create_page(payload: dict):
     global ENGINE
     ENGINE = ENGINE or create_engine()
-    payload = request.get_json()
+    if "client_secret" not in payload or payload["client_secret"] != os.getenv("CLIENT_SECRET"):
+        return "not allowed", 401
 
     url = payload["url"]
+    if url.count("/") > 1:
+        return "only one slash allowed", 401
     page_type = payload.get("page_type") or DEFAULT_PAGE_TYPE
     title = payload["title"]
     body = ""
@@ -85,29 +100,90 @@ def create_page():
             h = section["type"]
             body += f"<{h}>{section['content']}</{h}>"
 
-    existing_content = do_query(f"select * from content where url = '{url}'")
+    existing_content = [
+        dict(i) for i in ENGINE.execute(f"select * from content where url = ?", (url,))
+    ]
 
     if existing_content:
         if (
             body != existing_content[0]["body"]
-            and title != existing_content[0]["title"]
-            and page_type != existing_content[0]["page_type"]
+            or title != existing_content[0]["title"]
+            or page_type != existing_content[0]["page_type"]
         ):
-            do_query(
-                f"update content set title = '{title}', body = '{body}', "
-                f"page_type = '{page_type}' where url = '{url}'"
+            ENGINE.execute(
+                f"update content set title = ?, body = ?, page_type = ? where url = ?",
+                (title, body, page_type, url),
             )
-            update_sitemap()
-            push_refreshed_db()
+            update_everything(url)
         return f"{BASE_URL}/{url}", 200
 
     ENGINE.execute(
-        "insert into content (url, page_type, title, body) values (?, ?, ?, ?)", 
+        "insert into content (url, page_type, title, body) values (?, ?, ?, ?)",
         (url, page_type, title, body),
     )
-    update_sitemap()
-    push_refreshed_db()
+    update_everything(url)
     return f"{BASE_URL}/{url}", 200
+
+
+def get_all_urls():
+    return [i["url"] for i in do_query("select url from content")]
+
+
+def render_all_updated_pages(url=None):
+    def url_for(name, filename):
+        num_slashes = url.count("/")
+        dots = ""
+        if num_slashes:
+            dots = "../" * num_slashes
+        return f"{dots}{name}/{filename}"
+
+    urls = [url] if url else get_all_urls()
+
+    for url in urls:
+        content = get_content(url)
+        with open(f"templates/page_{content['page_type']}.html") as fin:
+            rendered = Template(fin.read()).render(url_for=url_for, **content)
+            html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"{url}.html"
+            try:
+                with html_file.open() as fin:
+                    if fin.read() == rendered:
+                        print(f"no change for url {url}")
+                        continue
+                    with html_file.open("w") as fout:
+                        fout.write(rendered)
+            except FileNotFoundError:
+                try:
+                    with html_file.open("w") as fout:
+                        fout.write(rendered)
+                except FileNotFoundError:
+                    html_file.parent.mkdir(parents=True)
+                    with html_file.open("w") as fout:
+                        fout.write(rendered)
+
+
+def update_static_files():
+    for f in Path("static").iterdir():
+        public_path = Path(RENDERED_PUBLIC_FILES_PATH) / "static" / f.name
+        try:
+            with f.open() as fin, public_path.open() as public_fin:
+                if fin.read() != public_fin.read():
+                    print(f"{f} has changed, copying to public folder.")
+                    shutil.copy(f, public_path)
+        except UnicodeDecodeError:
+            with f.open("rb") as fin, public_path.open("rb") as public_fin:
+                if fin.read() != public_fin.read():
+                    print(f"{f} has changed, copying to public folder.")
+                    shutil.copy(f, public_path)
+        except FileNotFoundError:
+            print(f"{f} doesn't exist in public fodler, copying it there.")
+            shutil.copy(f, public_path)
+
+
+def update_everything(url=None):
+    render_all_updated_pages(url=url)
+    update_sitemap()
+    update_static_files()
+    push_refreshed_db()
 
 
 class NoContent(Exception):
