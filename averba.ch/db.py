@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sqlite3
 import subprocess as sp
 
@@ -23,9 +24,9 @@ md = MetaData()
 Content = Table(
     "content",
     md,
-    Column("uid", String, primary_key=True),
-    Column("page_version", String),
-    Column("heading", String),
+    Column("url", String, primary_key=True),
+    Column("page_type", String),
+    Column("title", String),
     Column("body", String),
 )
 
@@ -57,11 +58,13 @@ def _reset():
 
 
 def _init():
+    if Path(DB_PATH).exists:
+        Path(DB_PATH).unlink()
     conn = sqlite3.connect(DB_PATH)
     conn.close()
     create_tables()
 
 
 def push_refreshed_db():
-    sp.check_output("git add /home/listenandtype/listenandtype/db.db", shell=True)
+    sp.check_output(f"git add {DB_PATH}", shell=True)
     sp.check_output("git commit -m 'update db'", shell=True)

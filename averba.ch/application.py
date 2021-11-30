@@ -1,6 +1,5 @@
 import logging
 import sys
-from uuid import uuid4
 
 from dotenv import load_dotenv
 from flask import Flask, request, render_template
@@ -10,12 +9,15 @@ from db import do_query, create_engine, push_refreshed_db
 load_dotenv()
 
 ENGINE = None
-PAGE_VERSION = "0.0.1"
-URL = "https://zev.averba.ch"
+BASE_URL = "https://zev.averba.ch"
+FATHOM_UID = "LWJFWQJS"
+THEME_COLOR = "#209cee"
+DEFAULT_PAGE_TYPE = "0.0.1"
+
 DEFAULT_CONTENT = {
-    "page_version": PAGE_VERSION,
+    "page_type": DEFAULT_PAGE_TYPE,
     "body": "<h1>Zev Averbach</h1>",
-    "fathom_uid": "LWJFWQJS",
+    "fathom_uid": FATHOM_UID,
 }
 
 app = Flask(__name__)
@@ -25,7 +27,7 @@ app.logger.setLevel(logging.DEBUG)
 
 @app.context_processor
 def inject_globals():
-    return dict(SITE_URL=URL)
+    return dict(BASE_URL=BASE_URL, THEME_COLOR=THEME_COLOR)
 
 
 @app.route("/favicon.ico")
@@ -48,16 +50,21 @@ def page(path):
         except NoContent:
             return "no content!", 400
 
-    return render_template(f"page_{content['page_version']}.html", **content)
+    return render_template(f"page_{content['page_type']}.html", **content)
 
 
-def get_content(uid):
+def get_content(url):
     global ENGINE
     ENGINE = ENGINE or create_engine()
-    result = ENGINE.execute(f"select * from content where uid = '{uid}'")
+    result = ENGINE.execute(f"select * from content where url = '{url}'")
     if not result.returns_rows:
         raise NoContent
-    return [{**dict(r), **{"fathom_uid": "LWJFWQJS"}} for r in result][0]
+    return [{**dict(r), **{"fathom_uid": FATHOM_UID}} for r in result][0]
+
+
+def update_sitemap():
+    # TODO: implement this using sitemap-generator-cli, and upload to Google
+    pass
 
 
 @app.route("/create", methods=["POST"])
@@ -65,50 +72,42 @@ def create_page():
     global ENGINE
     ENGINE = ENGINE or create_engine()
     payload = request.get_json()
-    heading = ""
-    if "heading" in payload and "body" in payload:
-        heading, body = payload["heading"], payload["body"]
-    elif "heading" in payload and "paragraphs" in payload:
-        heading, paragraphs = payload["heading"], payload["paragraphs"]
-        body = "".join([f"<p>{paragraph}</p>" for paragraph in paragraphs])
-    elif "sections" in payload:
-        sections = payload["sections"]
-        body = ""
-        for section in sections:
-            if section["type"] == "paragraph":
-                body += f"<p>{section['content']}</p>"
-            elif section["type"].startswith("h"):
-                h = section["type"]
-                body += f"<{h}>{section['content']}</{h}>"
-    else:
-        return "bad args", 400
 
-    # TODO: is this necessary?
-    escaped_body = body.replace("'", "&#39;")
-    uid = None
-    if "uid" in payload:
-        uid = payload["uid"]
-        existing_content = do_query(f"select * from content where uid = '{uid}'")
-        if existing_content:
-            if (
-                body != existing_content[0]["body"]
-                and heading != existing_content[0]["heading"]
-                and PAGE_VERSION != existing_content[0]["page_version"]
-            ):
-                do_query(
-                    f"update content set heading = '{heading}', body = '{body}', "
-                    f"page_version = '{PAGE_VERSION}' where uid = '{uid}'"
-                )
-                push_refreshed_db()
-            return f"{URL}/{uid}", 200
+    url = payload["url"]
+    page_type = payload.get("page_type") or DEFAULT_PAGE_TYPE
+    title = payload["title"]
+    body = ""
 
-    uid = uid or uuid4()
+    for section in payload["sections"]:
+        if section["type"] == "paragraph":
+            body += f"<p>{section['content']}</p>"
+        elif section["type"].startswith("h"):
+            h = section["type"]
+            body += f"<{h}>{section['content']}</{h}>"
+
+    existing_content = do_query(f"select * from content where url = '{url}'")
+
+    if existing_content:
+        if (
+            body != existing_content[0]["body"]
+            and title != existing_content[0]["title"]
+            and page_type != existing_content[0]["page_type"]
+        ):
+            do_query(
+                f"update content set title = '{title}', body = '{body}', "
+                f"page_type = '{page_type}' where url = '{url}'"
+            )
+            update_sitemap()
+            push_refreshed_db()
+        return f"{BASE_URL}/{url}", 200
+
     ENGINE.execute(
-        f"insert into content (uid, page_version, heading, body) "
-        f"values ('{uid}', '{PAGE_VERSION}', '{heading}', '{escaped_body}')"
+        "insert into content (url, page_type, title, body) values (?, ?, ?, ?)", 
+        (url, page_type, title, body),
     )
+    update_sitemap()
     push_refreshed_db()
-    return f"{URL}/{uid}", 200
+    return f"{BASE_URL}/{url}", 200
 
 
 class NoContent(Exception):

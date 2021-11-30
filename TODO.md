@@ -1,13 +1,35 @@
+- [ ] render the pages whenever
+  - [ ] there's a new page
+  - [ ] there's a page update
+  - [ ] there's a template update
+  - [ ] this replaces the `get_content` piece 
+  - [ ] use Supabase's DB events for this
+    - [ ] fire a function hook when the DB changes
+      - [ ] have it call an endpoint hosted on render.com which re-renders the relevant pages
+    - [ ] store markdown files in Supabase Storage
+      - [ ] parse it
+  - [ ] use the front-end event listener tech to do something interesting
+    - [ ] live status updates, for example
+
+- [ ] make site responsive
+  - [ ] see these sites as inspiration for nice, basic layouts
+    - https://cassidoo.co/
+    - https://www.swyx.io/
+    - https://overreacted.io/ 
+- [ ] bring content over from old site
+- [ ] add content from Twilio etc.
+- [ ] make a timeline
+- [ ] blog about the things you've built, and maybe make pages for them
 - [ ] generate sitemap on every change and submit it to Google
   - [ ] https://stackoverflow.com/a/13906868/4386191
-- [ ] detect similar or duplicate pages and disallow it, it fucks up SEO
 - [ ] web standard validator programmatically?
-- [ ] make site responsive
+- [ ] detect similar or duplicate pages and disallow it, it fucks up SEO
+- [ ] dark/light mode
+- [x] set a reasonable value for THEME_COLOR 
+- [x] change favicon
 - [x] canonical link
-- [ ] integrate Supabase
-  - [ ] have the site live-update when there's new content
-  - [ ] store markdown files in Supabase Storage
-    - [ ] parse it
-
+- [ ] set other metas
+  - html lang?
+- [ ] implement other SEO best practices
 # Later
 - [ ] add site programmatically to Fathom

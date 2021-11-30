@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Playfair+Display:wght@700&display=swap');
+
+html {
+  font-family: 'Playfair Display', Helvetica, serif;
+  max-width: 70ch;
+  padding: 1em 1em;
+  margin: auto;
+  line-height: 1.75;
+  font-size: 1.25em;
+  background-color: white;
+  color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        color: white;
+        background-color: black;
+    }
+}
+
+h1 {
+    font-size: calc(.7em + 5vw);
+}
+
+p, ul, ol {
+  margin-bottom: 2em;
+  font-size: calc(1em + .25vw);
+  font-family: Helvetica, sans-serif;
+}

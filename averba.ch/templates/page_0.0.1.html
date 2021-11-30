@@ -3,34 +3,23 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Instapub</title>
+  <title>{{ title }}</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta property="og:title" content="{{ heading }}">
-  <meta property="og:url" content="{{ SITE_URL }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:url" content="{{ BASE_URL }}/{{ url }}">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="">
 
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }} ">
-
-  <meta name="theme-color" content="#fafafa">
-  <link rel=“canonical” href=“{{ SITE_URL }}/{{ uid }}” />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }} ">
+  <meta name="theme-color" content="{{ THEME_COLOR }}">
+  <link rel="canonical" href="{{ BASE_URL }}/{{ url }}" />
 </head>
 
 <body>
-
-  {% if heading %}
-    <h1>{{ heading }}</h1>
-    <p>{{ body | safe }}</p>
-  {% else %}
-    {{ body | safe }}
-  {% endif %}
+  {{ body | safe }}
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
-
-  <script>
-  </script>
 </body>
 
 </html>
