@@ -1,7 +1,7 @@
 - [ ] render the pages whenever
-  - [ ] there's a new page
-  - [ ] there's a page update
-  - [ ] there's a template update
+  - [x] there's a new page
+  - [x] there's a page update
+  - [x] there's a template update
   - [ ] this replaces the `get_content` piece 
   - [ ] use Supabase's DB events for this
     - [ ] fire a function hook when the DB changes
@@ -22,6 +22,10 @@
 - [ ] blog about the things you've built, and maybe make pages for them
 - [ ] generate sitemap on every change and submit it to Google
   - [ ] https://stackoverflow.com/a/13906868/4386191
+    - there's no limit to how often you re-submit it
+  - [ ] first create internal links automatically
+    - [https://moz.com/learn/seo/internal-link]
+    - [ ] limit it to 150 links in a given page
 - [ ] web standard validator programmatically?
 - [ ] detect similar or duplicate pages and disallow it, it fucks up SEO
 - [ ] dark/light mode
@@ -30,6 +34,4 @@
 - [x] canonical link
 - [ ] set other metas
   - html lang?
-- [ ] implement other SEO best practices
-# Later
-- [ ] add site programmatically to Fathom
+  - [optimize for crawlers](https://www.wordstream.com/blog/ws/2020/11/17/website-visibility)
