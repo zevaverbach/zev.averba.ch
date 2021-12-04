@@ -8,7 +8,12 @@
       - [ ] have it call an endpoint hosted on render.com which re-renders the relevant pages
   - [ ] use the front-end event listener tech to do something interesting
     - [ ] live status updates, for example
-  - [ ] maybe make the site based on Svelte-Kit or Next.js
+  - [ ] maybe re-make the site based on Svelte-Kit or Next.js
+    - maybe both? get some muscle memory
+  - [ ] maybe add a 'description' column to content and display that in TOC
+  - [ ] add auth so that only privileged people can see my real-time updates
+  - [ ] link to TOC in main page
+  - [ ] recent posts on main page
 
 - [ ] make site responsive
   - [ ] see these sites as inspiration for nice, basic layouts
