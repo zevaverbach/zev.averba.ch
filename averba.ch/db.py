@@ -10,7 +10,8 @@ import sqlalchemy
 load_dotenv()
 
 DB_PATH = os.getenv("DB_PATH")
-CONSTR = os.getenv("DB_CONNECTION_STRING")
+SQLITE_CONSTR = os.getenv("SQLITE_DB_CONNECTION_STRING")
+CONSTR = os.getenv("DB_CONNECTION_URL")
 ENGINE = None
 
 
@@ -66,6 +67,8 @@ def _init():
 
 
 def push_refreshed_db():
+    if CONSTR != SQLITE_CONSTR:
+        return
     sp.check_output(f"git add {DB_PATH}", shell=True)
     try:
         sp.check_output("git commit -m 'update db'", shell=True)

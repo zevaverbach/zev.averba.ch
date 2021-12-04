@@ -29,11 +29,17 @@ DEFAULT_CONTENT = {
 app = Flask(__name__)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
+GLOBALS = dict(
+    BASE_URL=BASE_URL,
+    THEME_COLOR=THEME_COLOR,
+    SUPABASE_URL_UID="stewyikkzurffdfhwprj",
+    SUPABASE_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzODQzOTYwNSwiZXhwIjoxOTU0MDE1NjA1fQ.1QNNHL8RUSzT1YYWpyEzyeJNCFQwRd5APRT9EXXkmXM",
+)
 
 
 @app.context_processor
 def inject_globals():
-    return dict(BASE_URL=BASE_URL, THEME_COLOR=THEME_COLOR)
+    return GLOBALS
 
 
 @app.route("/favicon.ico")
@@ -129,6 +135,31 @@ def get_all_urls():
     return [i["url"] for i in do_query("select url from content")]
 
 
+def get_all_titles_and_urls():
+    return [(i["title"], i["url"]) for i in do_query("select title, url from content")]
+
+
+def render_toc():
+    titles_and_urls = get_all_titles_and_urls()
+
+    def url_for(name, filename):
+        return f"{name}/{filename}"
+
+    with open(f"templates/toc_0.0.1.html") as fin:
+        rendered = Template(fin.read()).render(url_for=url_for, titles_and_urls=titles_and_urls, **GLOBALS)
+        html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"toc.html"
+        try:
+            with html_file.open() as fin:
+                if fin.read() == rendered:
+                    print(f"no change for url {url}")
+                    return
+                with html_file.open("w") as fout:
+                    fout.write(rendered)
+        except FileNotFoundError:
+            with html_file.open("w") as fout:
+                fout.write(rendered)
+
+
 def render_all_updated_pages(url=None):
     def url_for(name, filename):
         num_slashes = url.count("/")
@@ -142,7 +173,7 @@ def render_all_updated_pages(url=None):
     for url in urls:
         content = get_content(url)
         with open(f"templates/page_{content['page_type']}.html") as fin:
-            rendered = Template(fin.read()).render(url_for=url_for, **content)
+            rendered = Template(fin.read()).render(url_for=url_for, **content, **GLOBALS)
             html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"{url}.html"
             try:
                 with html_file.open() as fin:
@@ -165,7 +196,7 @@ def update_static_files():
     for f in Path("static").iterdir():
         if f.name == "robots.txt":
             public_path = Path(RENDERED_PUBLIC_FILES_PATH) / f.name
-        else: 
+        else:
             public_path = Path(RENDERED_PUBLIC_FILES_PATH) / "static" / f.name
         try:
             with f.open() as fin, public_path.open() as public_fin:
@@ -184,6 +215,7 @@ def update_static_files():
 
 def update_everything(url=None):
     render_all_updated_pages(url=url)
+    render_toc()
     update_sitemap()
     update_static_files()
     push_refreshed_db()

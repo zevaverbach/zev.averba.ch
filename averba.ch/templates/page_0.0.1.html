@@ -16,11 +16,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }} ">
   <meta name="theme-color" content="{{ THEME_COLOR }}">
   <link rel="canonical" href="{{ BASE_URL }}/{{ url }}" />
+  <script src="https://unpkg.com/@supabase/supabase-js"></script>
 </head>
 
 <body>
   {{ body | safe }}
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
+  <script>
+    // TODO: listen for changes to this post and update it in real time
+    const { createClient } = supabase
+    const _supabase = createClient('https://{{ SUPABASE_URL_UID }}.supabase.co', '{{ SUPABASE_API_KEY }}')
+  </script>
 </body>
 
 </html>

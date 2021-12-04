@@ -2,14 +2,13 @@
   - [x] there's a new page
   - [x] there's a page update
   - [x] there's a template update
-  - [ ] this replaces the `get_content` piece 
-  - [ ] use Supabase's DB events for this
+  - [x] this replaces the `get_content` piece 
+  - [x] use Supabase's DB events for this
     - [ ] fire a function hook when the DB changes
       - [ ] have it call an endpoint hosted on render.com which re-renders the relevant pages
-    - [ ] store markdown files in Supabase Storage
-      - [ ] parse it
   - [ ] use the front-end event listener tech to do something interesting
     - [ ] live status updates, for example
+  - [ ] maybe make the site based on Svelte-Kit or Next.js
 
 - [ ] make site responsive
   - [ ] see these sites as inspiration for nice, basic layouts
