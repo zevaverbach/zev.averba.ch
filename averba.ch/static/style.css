@@ -19,15 +19,13 @@ html {
   padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color: white;
-    background-color: black;
-  }
+h1 {
+  font-size: calc(.6em + 1.8vw);
 }
 
-h1 {
-  font-size: calc(.7em + 2vw);
+h1.title {
+  margin-top: 2vh;
+  color: brown;
 }
 
 #container {
@@ -38,7 +36,20 @@ p, ul, ol {
   margin-bottom: 2em;
   font-size: calc(1em + .25vw);
   font-family: "Menlo", Helvetica, sans-serif;
+  color: #17191C;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color: white;
+    background-color: black;
+  }
+  p, ul, ol {
   color: #e8e6e3;
+  }
+  h1.title {
+    color: yellow
+  }
 }
 
 p.date {
