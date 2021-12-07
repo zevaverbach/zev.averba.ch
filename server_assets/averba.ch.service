@@ -6,7 +6,7 @@ After=network.target
 User=zev
 Group=www-data
 WorkingDirectory=/home/averba.ch/averba.ch/averba.ch
-ExecStart=/home/averba.ch/averba.ch/env/bin/gunicorn --workers 3 --error-logfile /home/averba.ch/averba.ch/error.log --access-logfile /home/averba.ch/averba.ch/access.log --bind unix:/home/averba.ch/averba.ch.sock -m 770 wsgi:app
+ExecStart=/home/averba.ch/averba.ch/env/bin/gunicorn --workers 3 --capture-output --log-level debug --error-logfile /home/averba.ch/averba.ch/error.log --access-logfile /home/averba.ch/averba.ch/access.log --bind unix:/home/averba.ch/averba.ch.sock -m 770 wsgi:app --reload
 
 [Install]
 WantedBy=multi-user.target

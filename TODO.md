@@ -1,27 +1,33 @@
+# Flow
+
+## Input
+- change 'content' via API calls
+- change 'content' via DB queries
+
+### Next
+- require authorization to make those changes
+- allow editing of the site if you're authenticated and authorized
+
+## On Change
+- render/re-render the relevant page
+- put the rendered page on the site
+- regenerate and deploy the TOC
+- regenerate and re-submit the sitemap.xml
+
+### Next
+- deploy to Cloudflare/S3/Render
+
+
 - [ ] render the pages whenever
-  - [x] there's a new page
-  - [x] there's a page update
-  - [x] there's a template update
-  - [x] this replaces the `get_content` piece 
-  - [x] use Supabase's DB events for this
-    - [ ] fire a function hook when the DB changes
-      - [ ] have it call an endpoint hosted on render.com which re-renders the relevant pages
-  - [ ] use the front-end event listener tech to do something interesting
-    - [ ] live status updates, for example
   - [ ] maybe re-make the site based on Svelte-Kit or Next.js
     - maybe both? get some muscle memory
-  - [ ] maybe add a 'description' column to content and display that in TOC
   - [ ] add auth so that only privileged people can see my real-time updates
   - [ ] link to TOC in main page
   - [ ] recent posts on main page
 
-- [ ] make site responsive
-  - [ ] see these sites as inspiration for nice, basic layouts
-    - https://cassidoo.co/
-    - https://www.swyx.io/
-    - https://overreacted.io/ 
 - [ ] bring content over from old site
 - [ ] add content from Twilio etc.
+- [ ] support code blocks (PrismJS)
 - [ ] make a timeline
 - [ ] blog about the things you've built, and maybe make pages for them
 - [ ] generate sitemap on every change and submit it to Google
@@ -33,9 +39,6 @@
 - [ ] web standard validator programmatically?
 - [ ] detect similar or duplicate pages and disallow it, it fucks up SEO
 - [ ] dark/light mode
-- [x] set a reasonable value for THEME_COLOR 
-- [x] change favicon
-- [x] canonical link
 - [ ] set other metas
   - html lang?
   - [optimize for crawlers](https://www.wordstream.com/blog/ws/2020/11/17/website-visibility)

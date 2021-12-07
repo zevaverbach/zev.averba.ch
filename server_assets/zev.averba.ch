@@ -11,6 +11,22 @@ server {
             include proxy_params;
             proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
         }
+
+        location /create_page {
+            include proxy_params;
+            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
+        }
+
+        location /update_page {
+            include proxy_params;
+            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
+        }
+
+        location /delete_page {
+            include proxy_params;
+            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
+        }
+
 	if ($request_uri = /index.html) {
 	    return 301 https://zev.averba.ch/;
 	}

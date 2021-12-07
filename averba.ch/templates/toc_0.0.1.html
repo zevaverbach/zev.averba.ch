@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="en">
 
 <head>
   <meta charset="utf-8">
   <title>Table of Contents</title>
-  <meta name="description" content="">
+  <meta name="description" content="Table of contents for Zev Averbach's personal site
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content "index, follow">
 
-  <meta property="og:title" content="{{ title }}">
+  <meta property="og:title" content="Table of contents for Zev Averbach's personal site.">
   <meta property="og:url" content="{{ BASE_URL }}/toc">
   <meta property="og:type" content="website">
 
@@ -20,12 +20,17 @@
 </head>
 
 <body>
-  <div id="toc"
-  {% for title, url in titles_and_urls %}
-    <div data-uid="{{ url }}" class="toc-row">
-      <a href='{{ BASE_URL }}/{{ url }}'>{{ title }}</a>
+  {% include 'nav_0.0.1.html' %}
+  <div id="container">
+    <h1>Posts</h1>
+    <div id="toc">
+    {% for page in all_pages %}
+      <div data-uid="{{ page['url'] }}" class="toc-row">
+        <a href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
+	<div class="toc-description">{{ page['description'] }}</div>
+      </div>
+    {% endfor %}
     </div>
-  {% endfor %}
   </div>
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
   <script>
@@ -33,9 +38,9 @@
     const { createClient } = supabase
     const _supabase = createClient('https://{{ SUPABASE_URL_UID }}.supabase.co', '{{ SUPABASE_API_KEY }}')
     const realtimeListener = _supabase
-      .from('content')
+      .from('{{ TABLE_NAME }}')
       .on('INSERT', payload => {
-	const { url, title } = payload.new
+	const { url, title, description } = payload.new
 	const existingElement = document.querySelector(`div[data-uid="${url}"]`);
 	if (existingElement) return
         const newDiv = document.createElement('div') 
@@ -44,20 +49,32 @@
 	newAnchor.href = `{{ BASE_URL }}/${url}`
 	newAnchor.innerText = title
         newDiv.appendChild(newAnchor)
+	descriptionDiv = document.createElement('div')
+	descriptionDiv.innerText = description
+	descriptionDiv.classList.add("toc-description")
+	newDiv.appendChild(descriptionDiv)
 	toc.appendChild(newDiv)
       })
       .on('UPDATE', payload => {
         console.log('Change received!', payload)
-        const { title, url } = payload.new
-	const existingElement = document.querySelector(`div[data-uid="${url}"]`);
+        const { title, url, description } = payload.new
+	const existingElement = document.querySelector(`div[data-uid="${payload.old.url}"]`);
 	if (!existingElement) return
 	const anchor = existingElement.children[0]
         if (title != anchor.innerText) {
 	    anchor.innerText = title
         }
-        if (url != anchor.href.split("/").slice(-1)) {
+	console.log(url, anchor.href.split("{{ BASE_URL }}/").slice(-1))
+	if (url != anchor.href.split("{{ BASE_URL }}/").slice(-1)) {
 	    anchor.href = `{{ BASE_URL }}/${url}`
         }
+	const descriptionElement = existingElement.children[1]
+	if (description != descriptionElement.innerText) {
+	  descriptionElement.innerText = description
+	}
+      })
+      .on('DELETE', payload => {
+	console.log(payload)
       })
       .subscribe()
   </script>

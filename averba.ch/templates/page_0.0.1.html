@@ -1,10 +1,10 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="en">
 
 <head>
   <meta charset="utf-8">
   <title>{{ title }}</title>
-  <meta name="description" content="">
+  <meta name="description" content="{{ description }}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content "index, follow">
 
@@ -20,12 +20,27 @@
 </head>
 
 <body>
-  {{ body | safe }}
+  {% include 'nav_0.0.1.html' %}
+  <h1>{{ title }}</h1>
+  <p class="date">{{ date }}</p>
+  <div id="body">
+    {{ body | safe }}
+  </body>
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
   <script>
     // TODO: listen for changes to this post and update it in real time
     const { createClient } = supabase
     const _supabase = createClient('https://{{ SUPABASE_URL_UID }}.supabase.co', '{{ SUPABASE_API_KEY }}')
+    const realtimeListener = _supabase
+      .from('{{ TABLE_NAME }}:url=eq.{{ url }}')
+      .on('UPDATE', payload => {
+        console.log('Change received!', payload)
+        const { title, body } = payload.new
+	const { url } = payload.old
+	if (title != document.title) document.title = title
+	const body_ = document.getElementById("body")
+        if (body_ != body.innerHTML) body_.innerHTML = body
+      }).subscribe()
   </script>
 </body>
 
