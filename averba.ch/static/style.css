@@ -30,6 +30,7 @@ h1.title {
 
 #body {
   margin-left: 2vh;
+  width: 90%;
 }
 
 p, ul, ol, span {
@@ -78,17 +79,6 @@ nav {
 #logo {
   font-size: calc(1.25em + 2.2vw);
   text-align: left;
-  text-decoration: underline magenta;   
-  color: dodgerblue;
-}
-
-#logo a:visited {
-  text-decoration: underline magenta;   
-  color: dodgerblue;
-}
-
-#logo a:hover {
-  color: #51a9ff;
 }
 
 nav a:hover {
@@ -127,5 +117,8 @@ nav div a {
   }
   html {
     max-width: 100vw;
+  }
+  #body {
+    width: 95%;
   }
 }
