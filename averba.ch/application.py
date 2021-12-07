@@ -113,7 +113,7 @@ def get_all_urls():
 
 
 def render_toc():
-    all_pages = do_query(f"select url, title, description, body from {TABLE_NAME}")
+    all_pages = do_query(f"select url, title, description, date from {TABLE_NAME}")
 
     def url_for(name, filename):
         return f"{name}/{filename}"

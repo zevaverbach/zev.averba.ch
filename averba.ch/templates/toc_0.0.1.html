@@ -21,14 +21,14 @@
 
 <body>
   {% include 'nav_0.0.1.html' %}
-  <div id="container">
-    <h1>Posts</h1>
+  <div id="body">
+    <h1 class="title">Posts</h1>
     <div id="toc">
     {% for page in all_pages %}
-      <div data-uid="{{ page['url'] }}" class="toc-row">
-        <a href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
-	<div class="toc-description">{{ page['description'] }}</div>
-      </div>
+      <div data-uid="{{ page['url'] }}" class="toc-row"></div>
+      <a href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
+      <span class="toc-description">({{ page['description'] }})</span>
+      <p>{{ page['date'] }}</p>
     {% endfor %}
     </div>
   </div>
@@ -41,7 +41,7 @@
       .from('{{ TABLE_NAME }}')
       .on('INSERT', payload => {
 	const { url, title, description } = payload.new
-	const existingElement = document.querySelector(`div[data-uid="${url}"]`);
+	const existingElement = document.querySelector(`p[data-uid="${url}"]`);
 	if (existingElement) return
         const newDiv = document.createElement('div') 
         newDiv.dataset.uid = url
@@ -58,7 +58,7 @@
       .on('UPDATE', payload => {
         console.log('Change received!', payload)
         const { title, url, description } = payload.new
-	const existingElement = document.querySelector(`div[data-uid="${payload.old.url}"]`);
+	const existingElement = document.querySelector(`p[data-uid="${payload.old.url}"]`);
 	if (!existingElement) return
 	const anchor = existingElement.children[0]
         if (title != anchor.innerText) {

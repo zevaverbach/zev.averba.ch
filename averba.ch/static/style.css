@@ -28,15 +28,26 @@ h1.title {
   color: brown;
 }
 
-#container {
+#body {
   margin-left: 2vh;
 }
 
-p, ul, ol {
+p, ul, ol, span {
   margin-bottom: 2em;
   font-size: calc(1em + .25vw);
   font-family: "Menlo", Helvetica, sans-serif;
   color: #17191C;
+}
+
+div#toc p, div#toc a {
+  margin-bottom: 0;
+  font-family: "Menlo", Helvetica, sans-serif;
+  font-size: calc(1em + .25vw);
+  color: #17191C;
+}
+
+div#toc a:hover {
+  color: dodgerblue;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -44,11 +55,14 @@ p, ul, ol {
     color: white;
     background-color: black;
   }
-  p, ul, ol {
-  color: #e8e6e3;
+  p, ul, ol, span {
+    color: #e8e6e3;
   }
   h1.title {
     color: yellow
+  }
+  div#toc p, div#toc a {
+    color: #e8e6e3;
   }
 }
 
@@ -77,7 +91,12 @@ nav {
   color: #51a9ff;
 }
 
-a:hover {
+nav a:hover {
+  filter: brightness(.8);
+  color: inherit;
+}
+
+.body a:hover {
   text-decoration: underline dotted magenta;   
   color: dodgerblue;
 }

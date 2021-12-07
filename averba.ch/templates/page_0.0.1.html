@@ -21,9 +21,9 @@
 
 <body>
   {% include 'nav_0.0.1.html' %}
+  <div id="body">
   <h1 class="title">{{ title }}</h1>
   <p class="date">{{ date }}</p>
-  <div id="body">
     {{ body | safe }}
   </body>
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
