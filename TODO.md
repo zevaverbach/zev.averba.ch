@@ -25,6 +25,10 @@
   - [ ] link to TOC in main page
   - [ ] recent posts on main page
 
+- [ ] make H1 title larger when small screen
+- [ ] make links smaller when small screen
+- [ ] center posts when small screen
+- [ ] make hover work in light mode (nav)
 - [ ] bring content over from old site
 - [ ] add content from Twilio etc.
 - [ ] support code blocks (PrismJS)
@@ -38,7 +42,6 @@
     - [ ] limit it to 150 links in a given page
 - [ ] web standard validator programmatically?
 - [ ] detect similar or duplicate pages and disallow it, it fucks up SEO
-- [ ] dark/light mode
 - [ ] set other metas
   - html lang?
   - [optimize for crawlers](https://www.wordstream.com/blog/ws/2020/11/17/website-visibility)

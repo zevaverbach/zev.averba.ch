@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Playfair+Display:wght@700&display=swap');
-@import url('http://fonts.cdnfonts.com/css/menlo');
+@import url('https://fonts.cdnfonts.com/css/menlo');
 
 html {
   background-color: white;
@@ -24,20 +24,30 @@ h1 {
 }
 
 h1.title {
+  margin-left: 2vh;
+  width: 90%;
   margin-top: 2vh;
-  color: brown;
+  color: red;
 }
 
 #body {
   margin-left: 2vh;
-  width: 90%;
+  max-width: 92%;
 }
 
 p, ul, ol, span {
   margin-bottom: 2em;
-  font-size: calc(1em + .25vw);
+  font-size: calc(.8em + .35vw);
   font-family: "Menlo", Helvetica, sans-serif;
   color: #17191C;
+}
+
+#toc {
+  margin-left: 2vh;
+}
+
+.toc-row {
+  padding-top: 1vw;
 }
 
 div#toc p, div#toc a {
@@ -69,6 +79,12 @@ div#toc a:hover {
 
 p.date {
   font-size: calc(.7em + .2vw);
+  margin-left: 2vh;
+  width: 90%;
+}
+
+.extra-space {
+  margin-top: 5vh;
 }
 
 nav {
@@ -82,8 +98,12 @@ nav {
 }
 
 nav a:hover {
-  filter: brightness(.8);
+  text-decoration: underline dodgerblue;
   color: inherit;
+}
+
+nav a.active {
+  text-decoration: underline dodgerblue;
 }
 
 .body a:hover {
@@ -106,7 +126,7 @@ nav div a {
   font-family: 'Playfair Display', Helvetica, serif;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 800px) {
   #logo {
     grid-column: 1 / -1;
     text-align: center;

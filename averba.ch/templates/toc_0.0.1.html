@@ -25,10 +25,12 @@
     <h1 class="title">Posts</h1>
     <div id="toc">
     {% for page in all_pages %}
+      {% if page['url'] != 'about' %}
       <div data-uid="{{ page['url'] }}" class="toc-row"></div>
       <a href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
       <span class="toc-description">({{ page['description'] }})</span>
       <p>{{ page['date'] }}</p>
+      {% endif %}
     {% endfor %}
     </div>
   </div>
@@ -78,6 +80,7 @@
       })
       .subscribe()
   </script>
+  {% include 'foot.html' %}
 </body>
 
 </html>

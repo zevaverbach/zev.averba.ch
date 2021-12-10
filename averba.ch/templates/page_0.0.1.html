@@ -21,9 +21,13 @@
 
 <body>
   {% include 'nav_0.0.1.html' %}
+  {% if url != "about" %}
+    <h1 class="title">{{ title }}</h1>
+    <p class="date">{{ date }}</p>
+  {% else %}
+    <div class="extra-space"></div>
+  {% endif %}
   <div id="body">
-  <h1 class="title">{{ title }}</h1>
-  <p class="date">{{ date }}</p>
     {{ body | safe }}
   </body>
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
@@ -34,7 +38,6 @@
     const realtimeListener = _supabase
       .from('{{ TABLE_NAME }}:url=eq.{{ url }}')
       .on('UPDATE', payload => {
-        console.log('Change received!', payload)
         const { title, body } = payload.new
 	const { url } = payload.old
 	if (title != document.title) document.title = title
@@ -42,6 +45,7 @@
         if (body_ != body.innerHTML) body_.innerHTML = body
       }).subscribe()
   </script>
+  {% include 'foot.html' %}
 </body>
 
 </html>

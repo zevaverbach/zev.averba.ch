@@ -1,0 +1,16 @@
+<script>
+  const about = document.getElementById("about")
+  const posts = document.getElementById("posts")
+  window.onload = () => {
+      if (window.location.pathname === "/toc") {
+          posts.classList.add("active")
+          about.classList.remove("active")
+      } else if (window.location.pathname === "/about") {
+          about.classList.add("active")
+          posts.classList.remove("active")
+      } else {
+          about.classList.remove("active")
+          posts.classList.remove("active")
+      }
+  }
+</script>
