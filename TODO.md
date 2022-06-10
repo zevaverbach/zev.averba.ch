@@ -1,19 +1,33 @@
 # TODO
 
-- [ ] disallow identical titles (in DB preferably)
-- [ ] render the pages whenever
-  - [ ] link to TOC in main page
-  - [ ] recent posts on main page
+- [ ] get endpoints working
+  - [ ] disallow "post" calls to the static pages (nginx)
 
+- [ ] disallow identical titles (in DB preferably)
+
+## Design
+
+- [ ] underline "posts" and "about" in nav on mobile!
+- [ ] remove "Posts" title entirely
+- [ ] make 'logo' larger on small screen
+- [ ] make H1 title a little larger when small screen
+- [ ] change "toc" to "posts"
+- [ ] more space between nav and title everywhere, but probably more on mobile
+- [ ] make two columns of items in toc on large screens
+- [ ] make the background in light mode lighter
+- [ ] change the link colors in dark mode, green is gross (maybe just stay with yellow even with hover...)
 - [ ] make a dark/light mode button
+- [ ] add syntax highlighting (PrismJS)
+
+## Content
+- [ ] make a "contact" page
 - [ ] make a page at "/"
-- [ ] make H1 title larger when small screen
-- [ ] make links smaller when small screen
 - [ ] bring content over from old site
 - [ ] add content from Twilio etc.
-- [ ] support code blocks (PrismJS)
 - [ ] make a timeline
 - [ ] blog about the things you've built, and maybe make pages for them
+
+### SEO
 - [ ] generate sitemap on every change and submit it to Google
   - [ ] https://stackoverflow.com/a/13906868/4386191
     - there's no limit to how often you re-submit it

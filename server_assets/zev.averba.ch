@@ -52,6 +52,9 @@ server {
 	}
 
 	location / {
+            limit_except GET {
+              deny  all;
+            }
 	    if ($request_uri ~ ^/(.*)\.html) {
 		return 302 /$1;
 	    }

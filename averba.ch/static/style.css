@@ -2,10 +2,12 @@
 @import url('https://fonts.cdnfonts.com/css/menlo');
 
 :root {
-  --my-white: #d3d3d3;
+  --my-white: #fafafa;
   --my-black: #212121;
   --my-yellow: #fdfa72;
   --my-blue: dodgerblue;
+  --my-green: #c5e90b;
+  --my-dark-green: #378805;
 }
 
 html {
@@ -27,13 +29,13 @@ html {
 }
 
 h1 {
-  font-size: calc(.9em + 1.8vw);
+  font-size: calc(1.2em + 1.6vw);
 }
 
 h1.title, h1.title-purple {
   margin-left: 2vh;
   width: 90%;
-  margin-top: 2vh;
+  margin-top: 4vh;
 }
 
 h1.title {
@@ -50,7 +52,7 @@ h1.title-purple {
 }
 
 p, ul, ol, span, label, input {
-  font-size: calc(.8em + .35vw);
+  font-size: .9em;
   font-family: "Menlo", Helvetica, sans-serif;
   color: #17191C;
 }
@@ -127,12 +129,20 @@ div#toc a:hover {
     color: var(--my-white);
     background-color: var(--my-black);
   }
+  #body a {
+    color: var(--my-yellow);
+  }
+  #body a:visited {
+    color: var(--my-green);
+  }
+  
   p, ul, ol, span, label {
     color: #e8e6e3;
   }
   h1.title, h1.title-purple {
     color: var(--my-yellow);
   }
+
   div#toc p, div#toc a, .toc-description{
     color: #e8e6e3;
   }
@@ -151,7 +161,7 @@ nav {
 }
 
 #logo {
-  font-size: calc(1.25em + 2.2vw);
+  font-size: calc(1.5em + 2.2vw);
   text-align: left;
   color: black;
 }
@@ -168,6 +178,7 @@ nav a.active {
 .purple {
   color: purple;
 }
+
 h1.purple {
   margin-left: 2vh;
 }
@@ -183,7 +194,8 @@ nav div:not(:first-child) {
   font-size: calc(.9em + 1vw);
   display: flex;
   align-items: center;
-  margin-left: 3vw;
+  margin-left: 1.7vw;
+  padding-right: 4vw;
   justify-content: center;
 }
 
@@ -193,10 +205,14 @@ nav div a {
   font-family: 'Playfair Display', Helvetica, serif;
 }
 
-@media only screen and (max-width: 800px) {
-  #logo {
+@media only screen and (max-width: 1000px) {
+  #logo, h1.title {
     grid-column: 1 / -1;
     text-align: center;
+  }
+
+  h1.title {
+    width: 95%;
   }
   nav {
     display: grid;
@@ -205,7 +221,31 @@ nav div a {
   html {
     max-width: 100vw;
   }
-  #body {
-    width: 95%;
+}
+
+
+@media only screen and (max-width: 750px) {
+  h1.title {
+    width: 94%;
+  }
+}
+@media only screen and (max-width: 700px) {
+  h1.title {
+    width: 93%;
+  }
+}
+@media only screen and (max-width: 650px) {
+  h1.title {
+    width: 92%;
+  }
+}
+@media only screen and (max-width: 600px) {
+  h1.title {
+    width: 91%;
+  }
+}
+@media only screen and (max-width: 550px) {
+  h1.title {
+    width: 90%;
   }
 }

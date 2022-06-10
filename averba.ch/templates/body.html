@@ -1,6 +1,6 @@
 <body>
   {% include 'nav_0.0.1.html' %}
-  {% if url not in ("about", "newsletter_signup") %}
+  {% if url not in ("toc", "about", "newsletter_signup") %}
     <h1 class="title">{{ title }}</h1>
     {% if date is not none %}<p class="date">{{ date }}</p>{% else %}<p></p>{% endif %}
   {% elif url == "newsletter_signup" %}
