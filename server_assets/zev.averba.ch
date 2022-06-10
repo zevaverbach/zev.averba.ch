@@ -7,6 +7,8 @@ server {
         access_log /var/log/nginx/zev.averba.ch.access.log;
         error_log /var/log/nginx/zev.averba.ch.error.log;
 
+	rewrite ^/$ /about redirect;
+
         location /create {
             include proxy_params;
             proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
@@ -27,6 +29,21 @@ server {
             proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
         }
 
+        location /sign_up {
+            include proxy_params;
+            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
+        }
+
+        location /resend_confirmation_email {
+            include proxy_params;
+            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
+        }
+
+        location /confirmation {
+            include proxy_params;
+            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
+        }
+
 	if ($request_uri = /index.html) {
 	    return 301 https://zev.averba.ch/;
 	}
@@ -38,6 +55,7 @@ server {
 	    if ($request_uri ~ ^/(.*)\.html) {
 		return 302 /$1;
 	    }
+            default_type "text/html";
 	    try_files $uri $uri.html $uri/ =404;
         }
 

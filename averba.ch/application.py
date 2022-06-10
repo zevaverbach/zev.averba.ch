@@ -1,4 +1,14 @@
-from functools import partial
+"""
+the page model:
+    url VARCHAR NOT NULL, 
+    page_type VARCHAR, 
+    title VARCHAR, 
+    description VARCHAR,
+    date INTEGER,
+    body VARCHAR, 
+    PRIMARY KEY (url)
+"""
+from importlib import import_module
 import logging
 import os
 from pathlib import Path
@@ -8,6 +18,7 @@ import subprocess
 from dotenv import load_dotenv
 from flask import Flask, request, render_template
 from jinja2 import Environment, FileSystemLoader
+from rich import pretty
 
 from db import do_query, create_engine
 
@@ -29,8 +40,6 @@ app.logger.setLevel(gunicorn_logger.level)
 GLOBALS = dict(
     BASE_URL=BASE_URL,
     THEME_COLOR=THEME_COLOR,
-    SUPABASE_URL_UID="stewyikkzurffdfhwprj",
-    SUPABASE_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzODQzOTYwNSwiZXhwIjoxOTU0MDE1NjA1fQ.1QNNHL8RUSzT1YYWpyEzyeJNCFQwRd5APRT9EXXkmXM",
     fathom_uid=FATHOM_UID,
     TABLE_NAME=TABLE_NAME,
 )
@@ -49,15 +58,6 @@ def authorize(auth_header):
 def favicon():
     FAVICON_PATH = "static/favicon.ico"
     return app.send_static_file(FAVICON_PATH)
-
-
-def get_content(url):
-    global ENGINE
-    ENGINE = ENGINE or create_engine()
-    result = ENGINE.execute(f"select * from {TABLE_NAME} where url = '{url}'")
-    if not result or not result.returns_rows:
-        raise NoContent
-    return [dict(r) for r in result][0]
 
 
 def update_sitemap():
@@ -112,6 +112,10 @@ def get_all_urls():
     return [i["url"] for i in do_query(f"select url from {TABLE_NAME}")]
 
 
+def get_all_pages():
+    return do_query(f"select * from {TABLE_NAME}")
+
+
 def render_toc():
     all_pages = do_query(f"select url, title, description, date from {TABLE_NAME}")
 
@@ -121,7 +125,6 @@ def render_toc():
     with open(f"templates/toc_0.0.1.html") as fin:
         template_str = fin.read()
     template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
-    print(all_pages)
     rendered = template.render(
         url_for=url_for,
         all_pages=all_pages,
@@ -157,43 +160,58 @@ def render_page(content, old_url=None):
         template_str = fin.read()
         template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
         rendered = template.render(url_for=url_for, **content, **GLOBALS)
-    try:
-        with html_file.open() as fin:
-            if fin.read() == rendered:
-                print(f"no change for url {url}")
-                return
-            with html_file.open("w") as fout:
-                fout.write(rendered)
-    except FileNotFoundError:
-        try:
-            with html_file.open("w") as fout:
-                fout.write(rendered)
-        except FileNotFoundError:
-            html_file.parent.mkdir(parents=True)
-            with html_file.open("w") as fout:
-                fout.write(rendered)
+    if html_file.exists():
+        if html_file.read_text() == rendered:
+            print(f"no change for url {url}")
+            return
+    if not html_file.parent.exists():
+        html_file.parent.mkdir(parents=True)
+    with html_file.open("w") as fout:
+        fout.write(rendered)
 
 
 def render_all_updated_pages():
-    def url_for(name, filename):
-        return f"../{name}/{filename}"
-
-    for url in get_all_urls():
-        content = get_content(url)
-        with open(f"templates/page_{content['page_type']}.html") as fin:
-            template_str = fin.read()
-        template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
-        rendered = template.render(url_for=url_for, **content, **GLOBALS)
-        html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"{url}.html"
-        if html_file.exists():
-            with html_file.open() as fin:
-                if fin.read() == rendered:
-                    print(f"no change for url {url}")
+    with open(f"templates/page_0.0.1.html") as fin:
+        template_str = fin.read()
+    template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
+    all_pages = get_all_pages()
+    for page in all_pages:
+        pretty.pprint(page["body"])
+        rendered = template.render(**page, **GLOBALS)
+        html_file = Path(RENDERED_PUBLIC_FILES_PATH) / (page["url"] + ".html")
+        print(html_file)
+        if not html_file.exists():
+            if "/" in page["url"]:
+                html_file.parent.mkdir(parents=True, exist_ok=True)
+            with html_file.open("w") as fout:
+                print(f"creating {page['url']} for the first time ({html_file})")
+                fout.write(rendered)
+                continue
+        with html_file.open() as fin:
+            if fin.read() == rendered:
+                print(f"no change for {page['url']} ({html_file})")
+                continue
+            else:
+                with html_file.open("w") as fout:
+                    print(f"rewriting {page['url']} ({html_file})")
+                    fout.write(rendered)
                     continue
-        if not html_file.parent.exists():
-            html_file.parent.mkdir(parents=True)
-        with html_file.open("w") as fout:
-            fout.write(rendered)
+
+
+def remove_all_pages_which_arent_in_db() -> None:
+    all_pages = get_all_pages()
+    urls = [p["url"] for p in all_pages]
+    root_directory = Path(RENDERED_PUBLIC_FILES_PATH)
+    for path_object in root_directory.glob("**/*"):
+        if path_object.is_file():
+            subpath = str(path_object).replace(f"{RENDERED_PUBLIC_FILES_PATH}/", "")
+            if subpath.startswith("static") or any(
+                subpath.endswith(i) for i in ("robots.txt", "toc.html")
+            ):
+                continue
+            if subpath.replace(".html", "") not in urls:
+                path_object.unlink()
+                print(f"removed {path_object} because it's not in DB")
 
 
 def update_static_files():
@@ -225,6 +243,7 @@ def update_static_files():
 def update_everything():
     updated = update_static_files()
     render_all_updated_pages()
+    remove_all_pages_which_arent_in_db()
     render_toc()
     update_sitemap()
 

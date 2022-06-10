@@ -1,9 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Playfair+Display:wght@700&display=swap');
 @import url('https://fonts.cdnfonts.com/css/menlo');
 
+:root {
+  --my-white: #d3d3d3;
+  --my-black: #212121;
+  --my-yellow: #fdfa72;
+  --my-blue: dodgerblue;
+}
+
 html {
-  background-color: white;
-  color: black;
+  background-color: var(--my-white);
+  color: var(--my-black);
   font-family: 'Playfair Display', Helvetica, serif;
   max-width: 80vw;
   padding: 1em;
@@ -20,14 +27,21 @@ html {
 }
 
 h1 {
-  font-size: calc(.6em + 1.8vw);
+  font-size: calc(.9em + 1.8vw);
 }
 
-h1.title {
+h1.title, h1.title-purple {
   margin-left: 2vh;
   width: 90%;
   margin-top: 2vh;
-  color: red;
+}
+
+h1.title {
+  color: var(--my-blue);
+}
+
+h1.title-purple {
+  color: purple;
 }
 
 #body {
@@ -35,11 +49,46 @@ h1.title {
   max-width: 92%;
 }
 
-p, ul, ol, span {
-  margin-bottom: 2em;
+p, ul, ol, span, label, input {
   font-size: calc(.8em + .35vw);
   font-family: "Menlo", Helvetica, sans-serif;
   color: #17191C;
+}
+
+input[type=submit] {
+  background-color: var(--my-blue);
+  color: #e8e6e3;
+  height: 2.5em;
+  cursor: pointer;
+  border: none;
+  outline: inherit;
+  grid-column: 2;
+}
+
+p, ul, ol, span {
+  margin-bottom: 2em;
+}
+
+input {
+  display: block;
+  padding: .2vw;
+  width: 20ch;
+  grid-column: 2;
+}
+
+li {
+  margin-left: 4vw;  
+}
+
+*:focus {
+    outline: none;
+}
+
+form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 5px;
+    margin: 0 auto;
 }
 
 #toc {
@@ -50,37 +99,46 @@ p, ul, ol, span {
   padding-top: 1vw;
 }
 
-div#toc p, div#toc a {
+div#toc p, div#toc a, .toc-description {
   margin-bottom: 0;
   font-family: "Menlo", Helvetica, sans-serif;
-  font-size: calc(1em + .25vw);
+  font-size: calc(.7em + .5vw);
   color: #17191C;
 }
 
+p.date {
+  font-size: calc(.5em + .2vw);
+  margin-left: 2vh;
+  width: 90%;
+}
+
+
+span.toc-date {
+  font-size: calc(.6em + .35vw) !important;
+  color: gray;
+}
+
 div#toc a:hover {
-  color: dodgerblue;
+  color: var(--my-blue);
 }
 
 @media (prefers-color-scheme: dark) {
   html {
+    color: var(--my-white);
+    background-color: var(--my-black);
+  }
+  p, ul, ol, span, label {
+    color: #e8e6e3;
+  }
+  h1.title, h1.title-purple {
+    color: var(--my-yellow);
+  }
+  div#toc p, div#toc a, .toc-description{
+    color: #e8e6e3;
+  }
+  .logo {
     color: white;
-    background-color: black;
   }
-  p, ul, ol, span {
-    color: #e8e6e3;
-  }
-  h1.title {
-    color: yellow
-  }
-  div#toc p, div#toc a {
-    color: #e8e6e3;
-  }
-}
-
-p.date {
-  font-size: calc(.7em + .2vw);
-  margin-left: 2vh;
-  width: 90%;
 }
 
 .extra-space {
@@ -95,28 +153,37 @@ nav {
 #logo {
   font-size: calc(1.25em + 2.2vw);
   text-align: left;
+  color: black;
 }
 
-nav a:hover {
-  text-decoration: underline dodgerblue;
+.nav a:hover {
+  text-decoration: underline var(--my-blue);
   color: inherit;
 }
 
 nav a.active {
-  text-decoration: underline dodgerblue;
+  text-decoration: underline var(--my-blue);
 }
 
-.body a:hover {
+.purple {
+  color: purple;
+}
+h1.purple {
+  margin-left: 2vh;
+}
+
+#body a:hover {
   text-decoration: underline dotted magenta;   
-  color: dodgerblue;
+  color: var(--my-blue);
 }
 
 nav div:not(:first-child) {
   cursor: pointer;
   padding: .1rem .3rem;
-  font-size: calc(.6em + 1.1vw);
+  font-size: calc(.9em + 1vw);
   display: flex;
   align-items: center;
+  margin-left: 3vw;
   justify-content: center;
 }
 

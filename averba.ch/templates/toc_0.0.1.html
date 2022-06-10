@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Table of Contents</title>
-  <meta name="description" content="Table of contents for Zev Averbach's personal site
+  <meta name="description" content="Table of contents for Zev Averbach's personal site">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content "index, follow">
 
@@ -16,7 +16,6 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }} ">
   <meta name="theme-color" content="{{ THEME_COLOR }}">
   <link rel="canonical" href="{{ BASE_URL }}/toc" />
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
 </head>
 
 <body>
@@ -25,61 +24,18 @@
     <h1 class="title">Posts</h1>
     <div id="toc">
     {% for page in all_pages %}
-      {% if page['url'] != 'about' %}
-      <div data-uid="{{ page['url'] }}" class="toc-row"></div>
-      <a href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
-      <span class="toc-description">({{ page['description'] }})</span>
-      <p>{{ page['date'] }}</p>
+      {% if page['url'] not in ('about', 'newsletter_signup') %}
+      <div data-uid="{{ page['url'] }}" class="toc-row">
+      <a class="toc-date" href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
+      {% if page['date'] is not none %}
+        <span class="toc-date">({{ page['date'] }})</span>
+      {% endif %}
+      </div>
       {% endif %}
     {% endfor %}
     </div>
   </div>
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
-  <script>
-    const toc = document.getElementById("toc")
-    const { createClient } = supabase
-    const _supabase = createClient('https://{{ SUPABASE_URL_UID }}.supabase.co', '{{ SUPABASE_API_KEY }}')
-    const realtimeListener = _supabase
-      .from('{{ TABLE_NAME }}')
-      .on('INSERT', payload => {
-	const { url, title, description } = payload.new
-	const existingElement = document.querySelector(`p[data-uid="${url}"]`);
-	if (existingElement) return
-        const newDiv = document.createElement('div') 
-        newDiv.dataset.uid = url
-	const newAnchor = document.createElement('a')
-	newAnchor.href = `{{ BASE_URL }}/${url}`
-	newAnchor.innerText = title
-        newDiv.appendChild(newAnchor)
-	descriptionDiv = document.createElement('div')
-	descriptionDiv.innerText = description
-	descriptionDiv.classList.add("toc-description")
-	newDiv.appendChild(descriptionDiv)
-	toc.appendChild(newDiv)
-      })
-      .on('UPDATE', payload => {
-        console.log('Change received!', payload)
-        const { title, url, description } = payload.new
-	const existingElement = document.querySelector(`p[data-uid="${payload.old.url}"]`);
-	if (!existingElement) return
-	const anchor = existingElement.children[0]
-        if (title != anchor.innerText) {
-	    anchor.innerText = title
-        }
-	console.log(url, anchor.href.split("{{ BASE_URL }}/").slice(-1))
-	if (url != anchor.href.split("{{ BASE_URL }}/").slice(-1)) {
-	    anchor.href = `{{ BASE_URL }}/${url}`
-        }
-	const descriptionElement = existingElement.children[1]
-	if (description != descriptionElement.innerText) {
-	  descriptionElement.innerText = description
-	}
-      })
-      .on('DELETE', payload => {
-	console.log(payload)
-      })
-      .subscribe()
-  </script>
   {% include 'foot.html' %}
 </body>
 

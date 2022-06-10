@@ -2,6 +2,8 @@ anyio==3.4.0
 astroid==2.8.6
 attrs==21.2.0
 backcall==0.2.0
+boto3==1.20.23
+botocore==1.23.24
 certifi==2021.10.8
 chardet==4.0.0
 charset-normalizer==2.0.9
@@ -10,6 +12,7 @@ dataclasses==0.6
 decorator==5.1.0
 deprecation==2.1.0
 Flask==2.0.2
+Flask-Limiter==2.0.2
 gotrue==0.2.0
 greenlet==1.1.2
 gunicorn==20.1.0
@@ -23,7 +26,9 @@ isort==5.10.1
 itsdangerous==2.0.1
 jedi==0.18.0
 Jinja2==3.0.3
+jmespath==0.10.0
 lazy-object-proxy==1.6.0
+limits==2.0.3
 MarkupSafe==2.0.1
 matplotlib-inline==0.1.3
 mccabe==0.6.1
@@ -47,6 +52,7 @@ python-dotenv==0.19.2
 realtime-py==0.1.3
 requests==2.25.1
 rfc3986==1.5.0
+s3transfer==0.5.0
 six==1.16.0
 sniffio==1.2.0
 SQLAlchemy==1.4.27

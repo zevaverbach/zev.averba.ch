@@ -1,0 +1,26 @@
+    <script>
+      const form = document.querySelector('form')
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault
+        const { currentTarget: fields } = event
+        try {
+          const first_name = fields.firstName.value
+          const email = fields.email.value
+          const body = JSON.stringify({first_name, email})
+          console.log(body)
+          const response = await fetch(
+            "/sign_up", 
+            {
+              method: "POST", 
+              body,
+              headers: new Headers({"content-type": "application/json"}),
+            })
+          console.log(response)
+        } catch (error) {
+          console.log(error)
+        }
+      })
+      const signUp = () => {
+        console.log(form) 
+      }
+    </script>

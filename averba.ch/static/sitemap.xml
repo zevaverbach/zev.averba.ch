@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://zev.averba.ch/</loc>
+    <loc>https://zev.averba.ch/about</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/toc</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/newsletter_signup</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/new_subscriber</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/unsubscribed</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/to_delete</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/blog/the-time-i-lost</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/blog/guest/the-time-i-lost</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/blog/zev/the-time-i-lost</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/bog/the-time-i-lost</loc>
+  </url>
+  <url>
+    <loc>https://zev.averba.ch/the-time-i-lost</loc>
   </url>
 </urlset>

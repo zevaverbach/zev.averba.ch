@@ -1,34 +1,14 @@
-# Flow
+# TODO
 
-## Input
-- change 'content' via API calls
-- change 'content' via DB queries
-
-### Next
-- require authorization to make those changes
-- allow editing of the site if you're authenticated and authorized
-
-## On Change
-- render/re-render the relevant page
-- put the rendered page on the site
-- regenerate and deploy the TOC
-- regenerate and re-submit the sitemap.xml
-
-### Next
-- deploy to Cloudflare/S3/Render
-
-
+- [ ] disallow identical titles (in DB preferably)
 - [ ] render the pages whenever
-  - [ ] maybe re-make the site based on Svelte-Kit or Next.js
-    - maybe both? get some muscle memory
-  - [ ] add auth so that only privileged people can see my real-time updates
   - [ ] link to TOC in main page
   - [ ] recent posts on main page
 
+- [ ] make a dark/light mode button
+- [ ] make a page at "/"
 - [ ] make H1 title larger when small screen
 - [ ] make links smaller when small screen
-- [ ] center posts when small screen
-- [ ] make hover work in light mode (nav)
 - [ ] bring content over from old site
 - [ ] add content from Twilio etc.
 - [ ] support code blocks (PrismJS)

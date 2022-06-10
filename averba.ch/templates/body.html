@@ -1,0 +1,20 @@
+<body>
+  {% include 'nav_0.0.1.html' %}
+  {% if url not in ("about", "newsletter_signup") %}
+    <h1 class="title">{{ title }}</h1>
+    {% if date is not none %}<p class="date">{{ date }}</p>{% else %}<p></p>{% endif %}
+  {% elif url == "newsletter_signup" %}
+    <h1 class="title-purple">Newsletter Signup</h1>
+    <p></p>
+  {% else %}
+    <div class="extra-space"></div>
+  {% endif %}
+  <div id="body">
+    {{ body | safe }}
+    {% if include_newsletter_signup_form %}{% include 'newsletter-signup.html' %}{% endif %}
+  </body>
+  <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
+  {% if include_newsletter_signup_form %}{% include 'newsletter-signup-js.html' %}{% endif %}
+  {% include 'foot.html' %}
+</body>
+</html>
