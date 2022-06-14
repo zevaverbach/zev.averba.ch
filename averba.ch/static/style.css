@@ -6,8 +6,6 @@
   --my-black: #212121;
   --my-yellow: #fdfa72;
   --my-blue: dodgerblue;
-  --my-green: #c5e90b;
-  --my-dark-green: #378805;
 }
 
 html {
@@ -94,7 +92,8 @@ form {
 }
 
 #toc {
-  margin-left: 2vh;
+  margin-top: 2em;
+  margin-left: 1vh;
 }
 
 .toc-row {
@@ -131,9 +130,6 @@ div#toc a:hover {
   }
   #body a {
     color: var(--my-yellow);
-  }
-  #body a:visited {
-    color: var(--my-green);
   }
   
   p, ul, ol, span, label {
@@ -211,6 +207,11 @@ nav div a {
     text-align: center;
   }
 
+  #toc {
+    text-align: center;
+    margin-left: 1.5em;
+  }
+
   h1.title {
     width: 95%;
   }
@@ -223,10 +224,14 @@ nav div a {
   }
 }
 
+/* I wish I didn't have to do this. :-( */
 
 @media only screen and (max-width: 750px) {
   h1.title {
     width: 94%;
+  }
+  #toc {
+    margin-left: .5em;
   }
 }
 @media only screen and (max-width: 700px) {

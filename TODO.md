@@ -7,6 +7,7 @@
 
 ## Design
 
+- [ ] center toc items on mobile
 - [ ] underline "posts" and "about" in nav on mobile!
 - [ ] remove "Posts" title entirely
 - [ ] make 'logo' larger on small screen

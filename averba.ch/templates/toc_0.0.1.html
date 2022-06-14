@@ -21,7 +21,6 @@
 <body>
   {% include 'nav_0.0.1.html' %}
   <div id="body">
-    <h1 class="title">Posts</h1>
     <div id="toc">
     {% for page in all_pages %}
       {% if page['url'] not in ('about', 'newsletter_signup') %}
