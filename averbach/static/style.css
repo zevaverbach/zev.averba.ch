@@ -14,8 +14,8 @@ html {
   font-family: 'Playfair Display', Helvetica, serif;
   padding: 1em;
   margin: auto;
-  line-height: 1.75;
-  font-size: 1.25em;
+  line-height: 1.5;
+  font-size: calc(1.25em + .3vw);
   box-sizing: border-box;
 }
 
@@ -29,15 +29,11 @@ h1 {
   font-size: calc(1.2em + 1.6vw);
 }
 
-h1.title, h1.title-purple {
-  margin-top: 4vh;
-}
-
-h1.title {
+h2.title {
   color: var(--my-blue);
 }
 
-h1.title-purple {
+h2.title-purple {
   color: purple;
 }
 
@@ -45,16 +41,6 @@ p, ul, ol, span, label, input {
   font-size: .9em;
   font-family: "Menlo", Helvetica, sans-serif;
   color: #17191C;
-}
-
-input[type=submit] {
-  background-color: var(--my-blue);
-  color: #e8e6e3;
-  height: 2.5em;
-  cursor: pointer;
-  border: none;
-  outline: inherit;
-  grid-column: 2;
 }
 
 p, ul, ol, span {
@@ -82,30 +68,6 @@ p.date {
   text-align: center;
 }
 
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color: var(--my-white);
-    background-color: var(--my-black);
-  }
-  #body a {
-    color: var(--my-yellow);
-  }
-  
-  p, ul, ol, span, label {
-    color: #e8e6e3;
-  }
-  h1.title, h1.title-purple {
-    color: var(--my-yellow);
-  }
-
-  div#toc p, div#toc a, .toc-description{
-    color: #e8e6e3;
-  }
-  .logo {
-    color: white;
-  }
-}
 
 .extra-space {
   margin-top: 5vh;
@@ -147,8 +109,13 @@ nav a.active {
 }
 
 #body {
+  margin-top: 3em;
   margin-left: 5vw;
   width: 85vw;
+}
+
+#body a {
+  color: var(--my-blue);
 }
 
 #body a:hover {
@@ -156,12 +123,22 @@ nav a.active {
   color: var(--my-blue);
 }
 
-#logo, h1.title {
+#logo, h2.title {
   grid-column: 1 / -1;
   text-align: center;
-  font-size: calc(1.5em + 2.2vw);
   color: black;
 }
+
+#logo {
+  font-size: calc(1.5em + 2.2vw);
+}
+
+h2.title {
+  font-size: calc(1em + 1.8vw);
+  margin-bottom: .5em;
+}
+
+
 
 #toc {
   text-align: center;
@@ -188,3 +165,26 @@ nav div:not(:first-child) {
   justify-content: center;
 }
 
+@media (prefers-color-scheme: dark) {
+  html {
+    color: var(--my-white);
+    background-color: var(--my-black);
+  }
+  #body a {
+    color: var(--my-yellow);
+  }
+  
+  p, ul, ol, span, label {
+    color: #e8e6e3;
+  }
+  h2.title, h2.title-purple {
+    color: var(--my-yellow);
+  }
+
+  div#toc p, div#toc a, .toc-description{
+    color: #e8e6e3;
+  }
+  .logo {
+    color: white;
+  }
+}

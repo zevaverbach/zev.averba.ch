@@ -1,15 +1,17 @@
+import pathlib as pl
 import sys
 
-from application import create_page
+from application import create_page, update_pages
 
-VALID_ARGS = "body", "url", "title", "date", "page_type", "description"
+VALID_ARGS = "body", "url", "title", "date", "page_type", "description", "path"
+VALID_ARGS_WITH_HYPHENS = [f"--{va}" for va in VALID_ARGS]
 
 
 args = {}
 if len(sys.argv) < 4:
     print("please provide some arguments")
-    print("they must include --url, --title, and --body")
-    print("they can also include --page-type, --description, and --date")
+    print("they must include --url, --title, --date, and either --body or --path")
+    print("they can also include --page-type and/or --description")
     sys.exit()
 
 for arg in sys.argv[1:]:
@@ -19,7 +21,7 @@ for arg in sys.argv[1:]:
     key_with_prepended_hyphens, value = arg.split("=")
     key = key_with_prepended_hyphens.replace("--", "")
     if key not in VALID_ARGS:
-        print(f"{key} isn't valid, these are: {VALID_ARGS}")
+        print(f"{key} isn't valid, these are: {VALID_ARGS_WITH_HYPHENS}")
         sys.exit()
     args[key] = value
 
@@ -29,11 +31,18 @@ if "url" not in args:
 if "title" not in args:
     print("please provide a title")
     sys.exit()
-if "body" not in args:
-    print("please provide a body")
+if "body" not in args and "path" not in args:
+    print("please provide a body or a path")
     sys.exit()
-if "EQUALS" in args["body"]:
+if "date" not in args:
+    print("please provide a date")
+    sys.exit()
+if "body" in args and "EQUALS" in args["body"]:
     args["body"] = args["body"].replace("EQUALS", "=")
+if "path" in args:
+    path = args["path"]
+    del args["path"]
+    args["body"] = pl.Path(path).read_text().replace("\n", "&#10;")
 
 try:
     create_page(**args)
@@ -41,4 +50,6 @@ except Exception as e:
     print(f"there was an error: {e}")
     sys.exit()
 else:
-    print("okay, added the page!")
+    title = args["title"]
+    print(f"okay, added the page '{title}'!")
+    update_pages()

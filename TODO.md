@@ -1,20 +1,16 @@
 # TODO
-- [ ] get endpoints working
-  - [ ] disallow "post" calls to the static pages (nginx)
-  - [ ] don't return 200 to delete_page if it doesn't exist
-  - [ ] test create_page
-  - [ ] test update_page
-  - [ ] set something up for rotating the key
-- [ ] make a way to edit posts at the CLI or web
 
-## Style
-- [ ] add dark prism.js and use that when the user is using dark mode
+- [ ] tweak the font of the syntax highlighting, at least a bit smaller
+- [ ] titlecase the title 
+- [ ] make the line height taller for paragraphs
+- [ ] make the title blue in light mode
+- [ ] does syntax highlighting look good in light mode?
 
 ## Content
 - [ ] add contact info to 'about'
-- [ ] blog about what you know
 - [ ] bring content over from old site
 - [ ] add content from Twilio etc.
+- [ ] blog about what you know
 - [ ] blog about the things you've built, and maybe make pages for them
 
 ### SEO

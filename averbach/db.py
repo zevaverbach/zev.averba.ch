@@ -1,9 +1,11 @@
 """
 CREATE TABLE content (
 	url VARCHAR NOT NULL, 
-	page_type VARCHAR,  # but the only valid value is '0.0.1' currently
-	title VARCHAR, 
-	body VARCHAR, description varchar, date integer, 
+	page_type VARCHAR NOT NULL,  # but the only valid value is '0.0.1' currently
+	title VARCHAR NOT NULL UNIQUE, 
+	body VARCHAR NOT NULL UNIQUE, 
+    description varchar, 
+    date integer NOT NULL, 
 	PRIMARY KEY (url)
 );
 """

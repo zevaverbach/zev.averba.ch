@@ -1,11 +1,13 @@
   <nav>
     <div id="logo">
       <a href="{{ BASE_URL }}" class="logo">
-        Zev Averbach
+        Zev Averbach{% if url not in ("about", "toc") %}:{% endif %}
       </a>
     </div>
-      <div class="nav"></div>
-      <div class="nav"><a id="about" href="/about" {% if url == 'about' %}class="active"{% endif %}>about</a></div>
-      <div class="nav"><a id="posts" href="/toc"{% if url == 'toc' %}class="active"{% endif %}>toc</a></div>
-      <div class="nav"></div>
+      {% if url in ("about", "toc") %}
+        <div class="nav"></div>
+        <div class="nav"><a id="about" href="/about" {% if url == 'about' %}class="active"{% endif %}>about</a></div>
+        <div class="nav"><a id="posts" href="/toc"{% if url == 'toc' %}class="active"{% endif %}>toc</a></div>
+        <div class="nav"></div>
+      {% endif %}
   </nav>

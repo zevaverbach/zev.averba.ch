@@ -31,62 +31,24 @@ BASE_URL = "https://zev.averba.ch"
 FATHOM_UID = "LWJFWQJS"
 THEME_COLOR = "#209cee"
 INITIAL_SCALE = 1.0
-DEV_MODE = False
 if gethostname() == "averbachs":
     RENDERED_PUBLIC_FILES_PATH = f"/var/www/{BASE_URL.split('/')[-1]}/html"
 else:
+    # local on Mac
     RENDERED_PUBLIC_FILES_PATH = f"/Users/zev/{BASE_URL.split('/')[-1]}/html"
-    DEV_MODE = True
-TABLE_NAME = "content"
 
-app = Flask(__name__)
 
-gunicorn_logger = logging.getLogger("gunicorn.error")
-app.logger.handlers = gunicorn_logger.handlers
-app.logger.setLevel(gunicorn_logger.level)
+class NoPages(Exception):
+    ...
+
 
 GLOBALS = dict(
     BASE_URL=BASE_URL,
     THEME_COLOR=THEME_COLOR,
     fathom_uid=FATHOM_UID,
     TABLE_NAME=TABLE_NAME,
-    DEV_MODE=DEV_MODE,
     INITIAL_SCALE=INITIAL_SCALE,
 )
-
-
-@app.context_processor
-def inject_globals():
-    return GLOBALS
-
-
-def authorize(auth_header):
-    return auth_header.replace("Bearer", "").strip() == os.getenv("AUTH_TOKEN")
-
-
-@app.route("/favicon.ico")
-def favicon():
-    FAVICON_PATH = "static/favicon.ico"
-    return app.send_static_file(FAVICON_PATH)
-
-
-def update_sitemap():
-    subprocess.call(
-        f"sitemap-generator {BASE_URL} --filepath {os.getenv('SITEMAP_PATH')}", shell=True
-    )
-
-
-@app.route("/create_page", methods=["POST"])
-def create():
-    auth_header = request.headers.get("Authorization")
-    if auth_header is None:
-        return "no", 400
-    if not authorize(auth_header):  # type: ignore
-        return "no", 400
-    payload = request.get_json()  # type: ignore
-    content = payload["record"]
-    create_page(**content["record"])
-    return "ok", 200
 
 
 def create_page(**content: dict) -> None:
@@ -96,120 +58,10 @@ def create_page(**content: dict) -> None:
     update_pages()
 
 
-@app.route("/delete_page", methods=["POST"])
-def delete():
-    auth_header = request.headers.get("Authorization")
-    if auth_header is None:
-        return "no", 400
-    if not authorize(auth_header):  # type: ignore
-        return "no", 400
-    payload = request.get_json()  # type: ignore
-    url = payload["url"]
-    print(url)
-    delete_page(url)
+def update_pages():
+    render_all_updated_pages()
     render_toc()
     update_sitemap()
-    return "ok", 200
-
-
-def delete_page(url):
-    query = f"delete from {TABLE_NAME} where url = '{url}'"
-    print(query)
-    do_query(query)
-    remove_all_pages_which_arent_in_db()
-
-
-@app.route("/update_page", methods=["POST"])
-def update():
-    auth_header = request.headers.get("Authorization")
-    if auth_header is None:
-        return "no", 400
-    if not authorize(auth_header):  # type: ignore
-        return "no", 400
-    payload = request.get_json()  # type: ignore
-    content, old_record = payload["record"], payload["old_record"]
-    delete_page(old_record["url"])
-    create_page(**content)
-    return "ok", 200
-
-
-class NoResult(Exception):
-    ...
-
-
-class NoUrls(NoResult):
-    ...
-
-
-class NoPages(NoResult):
-    ...
-
-
-def get_all_urls():
-    res = do_query(f"select url from {TABLE_NAME}")
-    if res is None:
-        raise NoUrls
-    return [i["url"] for i in res]
-
-
-def get_all_pages() -> list[dict]:
-    res = do_query(f"select * from {TABLE_NAME}")
-    if res is None:
-        raise NoPages
-    return res
-
-
-def render_toc():
-    all_pages = do_query(f"select url, title, description, date from {TABLE_NAME}")
-
-    def url_for(name, filename):
-        return f"{name}/{filename}"
-
-    with open(f"templates/toc_0.0.1.html") as fin:
-        template_str = fin.read()
-    template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
-    rendered = template.render(
-        url_for=url_for,
-        all_pages=all_pages,
-        url="toc",
-        **GLOBALS,
-    )
-    html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"toc.html"
-    if html_file.exists():
-        with html_file.open() as fin:
-            if fin.read() == rendered:
-                return
-    with html_file.open("w") as fout:
-        fout.write(rendered)
-
-
-def render_page(content, old_url=None):
-    url = content["url"]
-
-    def url_for(name, filename):
-        num_slashes = url.count("/")
-        dots = ""
-        if num_slashes:
-            dots = "../" * num_slashes
-        return f"{dots}{name}/{filename}"
-
-    html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"{url}.html"
-    if old_url:
-        old_html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"{old_url}.html"
-        gunicorn_logger.info(f"deleting {old_html_file}")
-        old_html_file.unlink()
-
-    with open(f"templates/page_{content['page_type']}.html") as fin:
-        template_str = fin.read()
-        template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
-        rendered = template.render(url_for=url_for, **content, **GLOBALS)
-    if html_file.exists():
-        if html_file.read_text() == rendered:
-            return
-    if not html_file.parent.exists():
-        html_file.parent.mkdir(parents=True)
-    with html_file.open("w") as fout:
-        fout.write(rendered)
 
 
 def render_all_updated_pages():
@@ -237,6 +89,48 @@ def render_all_updated_pages():
                     continue
 
 
+def get_all_pages() -> list[dict]:
+    res = do_query(f"select * from {TABLE_NAME}")
+    if res is None:
+        raise NoPages
+    return res
+
+
+def render_toc() -> None:
+    all_pages = do_query(f"select url, title, description, date from {TABLE_NAME}")
+
+    def url_for(name: str, filename: str) -> str:
+        return f"{name}/{filename}"
+
+    with open(f"templates/toc_0.0.1.html") as fin:
+        template_str = fin.read()
+    template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
+    rendered = template.render(
+        url_for=url_for,
+        all_pages=all_pages,
+        url="toc",
+        **GLOBALS,
+    )
+    html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"toc.html"
+    if html_file.exists():
+        with html_file.open() as fin:
+            if fin.read() == rendered:
+                return
+    with html_file.open("w") as fout:
+        fout.write(rendered)
+
+
+def update_sitemap():
+    subprocess.call(
+        f"sitemap-generator {BASE_URL} --filepath {os.getenv('SITEMAP_PATH')}", shell=True
+    )
+
+
+def delete_page(url: str) -> None:
+    do_query(f"delete from {TABLE_NAME} where url = '{url}'")
+    remove_all_pages_which_arent_in_db()
+
+
 def remove_all_pages_which_arent_in_db() -> None:
     all_pages = get_all_pages()
     urls = [p["url"] for p in all_pages]
@@ -251,8 +145,6 @@ def remove_all_pages_which_arent_in_db() -> None:
             if subpath.replace(".html", "") not in urls:
                 path_object.unlink()
                 print(f"removed {path_object} because it's not in DB")
-            else:
-                print(f"did not remove {path_object} because it's in the DB supposedly")
 
 
 def update_static_files() -> None:
@@ -276,19 +168,9 @@ def update_static_files() -> None:
             shutil.copy(f, public_path)
 
 
-def update_pages():
-    render_all_updated_pages()
-    render_toc()
-    update_sitemap()
-
-
 def update_everything():
     update_static_files()
     render_all_updated_pages()
     remove_all_pages_which_arent_in_db()
     render_toc()
     update_sitemap()
-
-
-class NoContent(Exception):
-    pass
