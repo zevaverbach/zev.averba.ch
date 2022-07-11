@@ -4,8 +4,8 @@
         Zev Averbach
       </a>
     </div>
-    <div class="nav"></div>
-    <div class="nav"><a id="about" href="/about">About</a></div>
-    <div class="nav"><a id="posts" href="/toc">Posts</a></div>
-    <div class="nav"></div>
+      <div class="nav"></div>
+      <div class="nav"><a id="about" href="/about" {% if url == 'about' %}class="active"{% endif %}>about</a></div>
+      <div class="nav"><a id="posts" href="/toc"{% if url == 'toc' %}class="active"{% endif %}>toc</a></div>
+      <div class="nav"></div>
   </nav>

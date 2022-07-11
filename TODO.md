@@ -1,28 +1,16 @@
 # TODO
-
 - [ ] get endpoints working
   - [ ] disallow "post" calls to the static pages (nginx)
+- [ ] make a way to edit posts at the CLI or web
 
-- [ ] disallow identical titles (in DB preferably)
-
-## Design
-
-- [ ] underline "posts" and "about" in nav on mobile!
-- [ ] change "toc" to "posts"
-- [ ] change the link colors in dark mode, green is gross (maybe just stay with yellow even with hover...)
-- [ ] make a dark/light mode button
-- [ ] add syntax highlighting
-  - PrismJS
-- [x] remove "Posts" title entirely
-- [x] make 'logo' larger on small screen
-- [x] make H1 title a little larger when small screen
+## Style
+- [ ] add dark prism.js and use that when the user is using dark mode
 
 ## Content
-- [ ] make a "contact" page
-- [ ] make a page at "/"
+- [ ] add contact info to 'about'
+- [ ] blog about what you know
 - [ ] bring content over from old site
 - [ ] add content from Twilio etc.
-- [ ] make a timeline
 - [ ] blog about the things you've built, and maybe make pages for them
 
 ### SEO

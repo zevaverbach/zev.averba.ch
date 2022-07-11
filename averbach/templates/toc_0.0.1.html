@@ -20,22 +20,16 @@
 
 <body>
   {% include 'nav_0.0.1.html' %}
-  <div id="body">
-    <div id="toc">
-    {% for page in all_pages %}
-      {% if page['url'] not in ('about', 'newsletter_signup') %}
-      <div data-uid="{{ page['url'] }}" class="toc-row">
+  <div id="toc">
+  {% for page in all_pages %}
+    {% if page['url'] not in ('about', 'newsletter_signup') %}
+    <div data-uid="{{ page['url'] }}" class="toc-row">
       <a class="toc-date" href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
-      {% if page['date'] is not none %}
-        <span class="toc-date">({{ page['date'] }})</span>
-      {% endif %}
-      </div>
-      {% endif %}
-    {% endfor %}
     </div>
+    {% endif %}
+  {% endfor %}
   </div>
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
-  {% include 'foot.html' %}
 </body>
 
 </html>

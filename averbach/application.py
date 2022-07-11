@@ -30,9 +30,9 @@ ENGINE = None
 BASE_URL = "https://zev.averba.ch"
 FATHOM_UID = "LWJFWQJS"
 THEME_COLOR = "#209cee"
-INITIAL_SCALE = 1.8
+INITIAL_SCALE = 1.0
 DEV_MODE = False
-if gethostname() == "theaverbachs":
+if gethostname() == "averbachs":
     RENDERED_PUBLIC_FILES_PATH = f"/var/www/{BASE_URL.split('/')[-1]}/html"
 else:
     RENDERED_PUBLIC_FILES_PATH = f"/Users/zev/{BASE_URL.split('/')[-1]}/html"
@@ -78,26 +78,26 @@ def update_sitemap():
 
 @app.route("/create_page", methods=["POST"])
 def create():
-    if not authorize(request.headers.get("Authorization")): # type: ignore
+    if not authorize(request.headers.get("Authorization")):  # type: ignore
         return "no", 400
-    payload = request.get_json() # type: ignore
+    payload = request.get_json()  # type: ignore
     content = payload["record"]
     create_page(**content["record"])
     return "ok", 200
 
 
 def create_page(**content: dict) -> None:
-    if 'page_type' not in content:
-        content['page_type'] = PAGE_TYPE_DEFAULT # type: ignore
+    if "page_type" not in content:
+        content["page_type"] = PAGE_TYPE_DEFAULT  # type: ignore
     do_query(f"insert into {TABLE_NAME} {tuple(content.keys())} values {tuple(content.values())}")
     update_pages()
 
 
 @app.route("/delete_page", methods=["POST"])
 def delete():
-    if not authorize(request.headers.get("Authorization")): # type: ignore
+    if not authorize(request.headers.get("Authorization")):  # type: ignore
         return "no", 400
-    payload = request.get_json() # type: ignore
+    payload = request.get_json()  # type: ignore
     url = payload["old_record"]["url"]
     delete_page(url)
     render_toc()
@@ -112,11 +112,11 @@ def delete_page(url):
 
 @app.route("/update_page", methods=["POST"])
 def update():
-    if not authorize(request.headers.get("Authorization")): # type: ignore
+    if not authorize(request.headers.get("Authorization")):  # type: ignore
         return "no", 400
-    payload = request.get_json() # type: ignore
+    payload = request.get_json()  # type: ignore
     content, old_record = payload["record"], payload["old_record"]
-    delete_page(old_record['url'])
+    delete_page(old_record["url"])
     create_page(**content)
     return "ok", 200
 
@@ -127,6 +127,7 @@ class NoResult(Exception):
 
 class NoUrls(NoResult):
     ...
+
 
 class NoPages(NoResult):
     ...
@@ -158,6 +159,7 @@ def render_toc():
     rendered = template.render(
         url_for=url_for,
         all_pages=all_pages,
+        url="toc",
         **GLOBALS,
     )
     html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"toc.html"
@@ -231,7 +233,7 @@ def remove_all_pages_which_arent_in_db() -> None:
         if path_object.is_file():
             subpath = str(path_object).replace(f"{RENDERED_PUBLIC_FILES_PATH}/", "")
             if subpath.startswith("static") or any(
-                subpath.endswith(i) for i in ("robots.txt", "toc.html")
+                subpath.endswith(i) for i in ("robots.txt", "toc.html", "sitemap.xml")
             ):
                 continue
             if subpath.replace(".html", "") not in urls:
@@ -241,7 +243,7 @@ def remove_all_pages_which_arent_in_db() -> None:
 
 def update_static_files() -> None:
     for f in Path("static").iterdir():
-        if f.name == "robots.txt":
+        if f.name in ("robots.txt", "sitemap.xml"):
             public_path = Path(RENDERED_PUBLIC_FILES_PATH) / f.name
         else:
             public_path = Path(RENDERED_PUBLIC_FILES_PATH) / "static" / f.name
@@ -258,7 +260,6 @@ def update_static_files() -> None:
         except FileNotFoundError:
             print(f"{f} doesn't exist in public folder, copying it there.")
             shutil.copy(f, public_path)
-
 
 
 def update_pages():

@@ -16,8 +16,8 @@ for arg in sys.argv[1:]:
     if "=" not in arg:
         print("please provide args in --arg_name=value format")
         sys.exit()
-    key_with_prepended_hyphens, value = arg.split('=')
-    key = key_with_prepended_hyphens.replace('--', '')
+    key_with_prepended_hyphens, value = arg.split("=")
+    key = key_with_prepended_hyphens.replace("--", "")
     if key not in VALID_ARGS:
         print(f"{key} isn't valid, these are: {VALID_ARGS}")
         sys.exit()
@@ -32,6 +32,8 @@ if "title" not in args:
 if "body" not in args:
     print("please provide a body")
     sys.exit()
+if "EQUALS" in args["body"]:
+    args["body"] = args["body"].replace("EQUALS", "=")
 
 try:
     create_page(**args)

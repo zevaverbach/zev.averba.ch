@@ -78,15 +78,10 @@ input {
 
 p.date {
   font-size: calc(.5em + .2vw);
-  margin-left: 2vh;
-  width: 90%;
+  grid-column: 1 / -1;
+  text-align: center;
 }
 
-
-span.toc-date {
-  font-size: calc(.6em + .35vw) !important;
-  color: gray;
-}
 
 @media (prefers-color-scheme: dark) {
   html {
@@ -126,8 +121,25 @@ nav {
   color: inherit;
 }
 
+nav div a {
+  color: inherit;
+  font-family: 'Playfair Display', Helvetica, serif;
+}
+
+nav div a:not(.active) {
+  text-decoration: none;
+}
+
+nav div a:first-of-type {
+  text-decoration: none;
+}
+
 nav a.active {
-  text-decoration: underline var(--my-blue);
+  text-decoration: underline var(--my-blue) !important;
+  --webkit-text-decoration-line: underline !important;
+  --webkit-text-decoration-color: var(--my-blue) !important;
+  --webkit-text-decoration-style: solid !important;
+  --webkit-text-decoration-thickness: 2px !important;
 }
 
 .purple {
@@ -135,7 +147,8 @@ nav a.active {
 }
 
 #body {
-  margin-left: 10vw;
+  margin-left: 5vw;
+  width: 85vw;
 }
 
 #body a:hover {
@@ -175,8 +188,3 @@ nav div:not(:first-child) {
   justify-content: center;
 }
 
-nav div a {
-  text-decoration: none;
-  color: inherit;
-  font-family: 'Playfair Display', Helvetica, serif;
-}
