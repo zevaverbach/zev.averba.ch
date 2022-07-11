@@ -5,6 +5,9 @@
 - [ ] make the line height taller for paragraphs
 - [ ] make the title blue in light mode
 - [ ] does syntax highlighting look good in light mode?
+- [ ] remove unused code and dependencies
+  - Flask is gone, for example
+- [ ] re-render requirements.txt
 
 ## Content
 - [ ] add contact info to 'about'
