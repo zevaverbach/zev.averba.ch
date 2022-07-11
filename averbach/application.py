@@ -78,7 +78,10 @@ def update_sitemap():
 
 @app.route("/create_page", methods=["POST"])
 def create():
-    if not authorize(request.headers.get("Authorization")):  # type: ignore
+    auth_header = request.headers.get("Authorization")
+    if auth_header is None:
+        return "no", 400
+    if not authorize(auth_header):  # type: ignore
         return "no", 400
     payload = request.get_json()  # type: ignore
     content = payload["record"]
@@ -95,10 +98,14 @@ def create_page(**content: dict) -> None:
 
 @app.route("/delete_page", methods=["POST"])
 def delete():
-    if not authorize(request.headers.get("Authorization")):  # type: ignore
+    auth_header = request.headers.get("Authorization")
+    if auth_header is None:
+        return "no", 400
+    if not authorize(auth_header):  # type: ignore
         return "no", 400
     payload = request.get_json()  # type: ignore
-    url = payload["old_record"]["url"]
+    url = payload["url"]
+    print(url)
     delete_page(url)
     render_toc()
     update_sitemap()
@@ -106,13 +113,18 @@ def delete():
 
 
 def delete_page(url):
-    do_query(f"delete from {TABLE_NAME} where url = '{url}'")
+    query = f"delete from {TABLE_NAME} where url = '{url}'"
+    print(query)
+    do_query(query)
     remove_all_pages_which_arent_in_db()
 
 
 @app.route("/update_page", methods=["POST"])
 def update():
-    if not authorize(request.headers.get("Authorization")):  # type: ignore
+    auth_header = request.headers.get("Authorization")
+    if auth_header is None:
+        return "no", 400
+    if not authorize(auth_header):  # type: ignore
         return "no", 400
     payload = request.get_json()  # type: ignore
     content, old_record = payload["record"], payload["old_record"]
@@ -239,6 +251,8 @@ def remove_all_pages_which_arent_in_db() -> None:
             if subpath.replace(".html", "") not in urls:
                 path_object.unlink()
                 print(f"removed {path_object} because it's not in DB")
+            else:
+                print(f"did not remove {path_object} because it's in the DB supposedly")
 
 
 def update_static_files() -> None:

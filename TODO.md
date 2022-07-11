@@ -1,6 +1,10 @@
 # TODO
 - [ ] get endpoints working
   - [ ] disallow "post" calls to the static pages (nginx)
+  - [ ] don't return 200 to delete_page if it doesn't exist
+  - [ ] test create_page
+  - [ ] test update_page
+  - [ ] set something up for rotating the key
 - [ ] make a way to edit posts at the CLI or web
 
 ## Style

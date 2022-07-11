@@ -9,11 +9,6 @@ server {
 
 	rewrite ^/$ /about redirect;
 
-        location /create {
-            include proxy_params;
-            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
-        }
-
         location /create_page {
             include proxy_params;
             proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
@@ -25,21 +20,6 @@ server {
         }
 
         location /delete_page {
-            include proxy_params;
-            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
-        }
-
-        location /sign_up {
-            include proxy_params;
-            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
-        }
-
-        location /resend_confirmation_email {
-            include proxy_params;
-            proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
-        }
-
-        location /confirmation {
             include proxy_params;
             proxy_pass http://unix:/home/averba.ch/averba.ch.sock;
         }
