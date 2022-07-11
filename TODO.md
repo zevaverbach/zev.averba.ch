@@ -7,14 +7,8 @@
 
 ## Design
 
-- [ ] revamp the CSS grid stuff, the layout is a mess:
-  - [ ] use a single column on mobile/< 1000 px display
-- [ ] center toc items on mobile
 - [ ] underline "posts" and "about" in nav on mobile!
 - [ ] change "toc" to "posts"
-- [ ] more space between nav and title everywhere, but probably more on mobile
-- [ ] make two columns of items in toc on large screens
-- [ ] make the background in light mode lighter
 - [ ] change the link colors in dark mode, green is gross (maybe just stay with yellow even with hover...)
 - [ ] make a dark/light mode button
 - [ ] add syntax highlighting

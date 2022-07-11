@@ -12,7 +12,6 @@ html {
   background-color: var(--my-white);
   color: var(--my-black);
   font-family: 'Playfair Display', Helvetica, serif;
-  max-width: 80vw;
   padding: 1em;
   margin: auto;
   line-height: 1.75;
@@ -31,8 +30,6 @@ h1 {
 }
 
 h1.title, h1.title-purple {
-  margin-left: 2vh;
-  width: 90%;
   margin-top: 4vh;
 }
 
@@ -42,11 +39,6 @@ h1.title {
 
 h1.title-purple {
   color: purple;
-}
-
-#body {
-  margin-left: 2vh;
-  max-width: 92%;
 }
 
 p, ul, ol, span, label, input {
@@ -76,35 +68,12 @@ input {
   grid-column: 2;
 }
 
-li {
-  margin-left: 4vw;  
-}
-
 *:focus {
     outline: none;
 }
 
-form {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 5px;
-    margin: 0 auto;
-}
-
-#toc {
-  margin-top: 2em;
-  margin-left: 1vh;
-}
-
 .toc-row {
   padding-top: 1vw;
-}
-
-div#toc p, div#toc a, .toc-description {
-  margin-bottom: 0;
-  font-family: "Menlo", Helvetica, sans-serif;
-  font-size: calc(.7em + .5vw);
-  color: #17191C;
 }
 
 p.date {
@@ -117,10 +86,6 @@ p.date {
 span.toc-date {
   font-size: calc(.6em + .35vw) !important;
   color: gray;
-}
-
-div#toc a:hover {
-  color: var(--my-blue);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -153,13 +118,7 @@ div#toc a:hover {
 
 nav {
   display: grid;
-  grid-template-columns: 8fr 1fr 1fr 3fr;
-}
-
-#logo {
-  font-size: calc(1.5em + 2.2vw);
-  text-align: left;
-  color: black;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .nav a:hover {
@@ -175,8 +134,8 @@ nav a.active {
   color: purple;
 }
 
-h1.purple {
-  margin-left: 2vh;
+#body {
+  margin-left: 10vw;
 }
 
 #body a:hover {
@@ -184,14 +143,35 @@ h1.purple {
   color: var(--my-blue);
 }
 
+#logo, h1.title {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: calc(1.5em + 2.2vw);
+  color: black;
+}
+
+#toc {
+  text-align: center;
+  margin-top: 2em;
+  margin-left: 1vh;
+}
+
+div#toc p, div#toc a, .toc-description {
+  margin-bottom: 0;
+  font-family: "Menlo", Helvetica, sans-serif;
+  font-size: calc(.7em + .5vw);
+  color: #17191C;
+}
+
+div#toc a:hover {
+  color: var(--my-blue);
+}
+
 nav div:not(:first-child) {
   cursor: pointer;
-  padding: .1rem .3rem;
   font-size: calc(.9em + 1vw);
   display: flex;
   align-items: center;
-  margin-left: 1.7vw;
-  padding-right: 4vw;
   justify-content: center;
 }
 
@@ -199,58 +179,4 @@ nav div a {
   text-decoration: none;
   color: inherit;
   font-family: 'Playfair Display', Helvetica, serif;
-}
-
-@media only screen and (max-width: 1000px) {
-  #logo, h1.title {
-    grid-column: 1 / -1;
-    text-align: center;
-  }
-
-  #toc {
-    text-align: center;
-    margin-left: 1.5em;
-  }
-
-  h1.title {
-    width: 95%;
-  }
-  nav {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  html {
-    max-width: 100vw;
-  }
-}
-
-/* I wish I didn't have to do this. :-( */
-
-@media only screen and (max-width: 750px) {
-  h1.title {
-    width: 94%;
-  }
-  #toc {
-    margin-left: .5em;
-  }
-}
-@media only screen and (max-width: 700px) {
-  h1.title {
-    width: 93%;
-  }
-}
-@media only screen and (max-width: 650px) {
-  h1.title {
-    width: 92%;
-  }
-}
-@media only screen and (max-width: 600px) {
-  h1.title {
-    width: 91%;
-  }
-}
-@media only screen and (max-width: 550px) {
-  h1.title {
-    width: 90%;
-  }
 }

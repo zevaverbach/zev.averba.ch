@@ -8,27 +8,35 @@ the page model:
     body VARCHAR, 
     PRIMARY KEY (url)
 """
-from importlib import import_module
 import logging
 import os
 from pathlib import Path
 import shutil
+from socket import gethostname
 import subprocess
 
 from dotenv import load_dotenv
-from flask import Flask, request, render_template
+from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
 from rich import pretty
 
-from db import do_query, create_engine
+from db import do_query
 
 load_dotenv()
 
+TABLE_NAME = "content"
+PAGE_TYPE_DEFAULT = "0.0.1"
 ENGINE = None
 BASE_URL = "https://zev.averba.ch"
 FATHOM_UID = "LWJFWQJS"
 THEME_COLOR = "#209cee"
-RENDERED_PUBLIC_FILES_PATH = f"/var/www/{BASE_URL.split('/')[-1]}/html"
+INITIAL_SCALE = 1.8
+DEV_MODE = False
+if gethostname() == "theaverbachs":
+    RENDERED_PUBLIC_FILES_PATH = f"/var/www/{BASE_URL.split('/')[-1]}/html"
+else:
+    RENDERED_PUBLIC_FILES_PATH = f"/Users/zev/{BASE_URL.split('/')[-1]}/html"
+    DEV_MODE = True
 TABLE_NAME = "content"
 
 app = Flask(__name__)
@@ -42,6 +50,8 @@ GLOBALS = dict(
     THEME_COLOR=THEME_COLOR,
     fathom_uid=FATHOM_UID,
     TABLE_NAME=TABLE_NAME,
+    DEV_MODE=DEV_MODE,
+    INITIAL_SCALE=INITIAL_SCALE,
 )
 
 
@@ -68,21 +78,26 @@ def update_sitemap():
 
 @app.route("/create_page", methods=["POST"])
 def create():
-    if not authorize(request.headers.get("Authorization")):
+    if not authorize(request.headers.get("Authorization")): # type: ignore
         return "no", 400
-    payload = request.get_json()
+    payload = request.get_json() # type: ignore
     content = payload["record"]
-    render_page(content=content)
-    render_toc()
-    update_sitemap()
+    create_page(**content["record"])
     return "ok", 200
+
+
+def create_page(**content: dict) -> None:
+    if 'page_type' not in content:
+        content['page_type'] = PAGE_TYPE_DEFAULT # type: ignore
+    do_query(f"insert into {TABLE_NAME} {tuple(content.keys())} values {tuple(content.values())}")
+    update_pages()
 
 
 @app.route("/delete_page", methods=["POST"])
 def delete():
-    if not authorize(request.headers.get("Authorization")):
+    if not authorize(request.headers.get("Authorization")): # type: ignore
         return "no", 400
-    payload = request.get_json()
+    payload = request.get_json() # type: ignore
     url = payload["old_record"]["url"]
     delete_page(url)
     render_toc()
@@ -91,29 +106,44 @@ def delete():
 
 
 def delete_page(url):
-    html_file = Path(RENDERED_PUBLIC_FILES_PATH) / f"{url}.html"
-    html_file.unlink()
+    do_query(f"delete from {TABLE_NAME} where url = '{url}'")
+    remove_all_pages_which_arent_in_db()
 
 
 @app.route("/update_page", methods=["POST"])
 def update():
-    if not authorize(request.headers.get("Authorization")):
+    if not authorize(request.headers.get("Authorization")): # type: ignore
         return "no", 400
-    payload = request.get_json()
+    payload = request.get_json() # type: ignore
     content, old_record = payload["record"], payload["old_record"]
-    old_url = None if content["url"] == old_record["url"] else old_record["url"]
-    render_page(content=content, old_url=old_url)
-    render_toc()
-    update_sitemap()
+    delete_page(old_record['url'])
+    create_page(**content)
     return "ok", 200
 
 
+class NoResult(Exception):
+    ...
+
+
+class NoUrls(NoResult):
+    ...
+
+class NoPages(NoResult):
+    ...
+
+
 def get_all_urls():
-    return [i["url"] for i in do_query(f"select url from {TABLE_NAME}")]
+    res = do_query(f"select url from {TABLE_NAME}")
+    if res is None:
+        raise NoUrls
+    return [i["url"] for i in res]
 
 
-def get_all_pages():
-    return do_query(f"select * from {TABLE_NAME}")
+def get_all_pages() -> list[dict]:
+    res = do_query(f"select * from {TABLE_NAME}")
+    if res is None:
+        raise NoPages
+    return res
 
 
 def render_toc():
@@ -134,7 +164,6 @@ def render_toc():
     if html_file.exists():
         with html_file.open() as fin:
             if fin.read() == rendered:
-                print(f"no change for toc")
                 return
     with html_file.open("w") as fout:
         fout.write(rendered)
@@ -162,7 +191,6 @@ def render_page(content, old_url=None):
         rendered = template.render(url_for=url_for, **content, **GLOBALS)
     if html_file.exists():
         if html_file.read_text() == rendered:
-            print(f"no change for url {url}")
             return
     if not html_file.parent.exists():
         html_file.parent.mkdir(parents=True)
@@ -176,10 +204,8 @@ def render_all_updated_pages():
     template = Environment(loader=FileSystemLoader("templates/")).from_string(template_str)
     all_pages = get_all_pages()
     for page in all_pages:
-        pretty.pprint(page["body"])
         rendered = template.render(**page, **GLOBALS)
         html_file = Path(RENDERED_PUBLIC_FILES_PATH) / (page["url"] + ".html")
-        print(html_file)
         if not html_file.exists():
             if "/" in page["url"]:
                 html_file.parent.mkdir(parents=True, exist_ok=True)
@@ -189,7 +215,6 @@ def render_all_updated_pages():
                 continue
         with html_file.open() as fin:
             if fin.read() == rendered:
-                print(f"no change for {page['url']} ({html_file})")
                 continue
             else:
                 with html_file.open("w") as fout:
@@ -214,8 +239,7 @@ def remove_all_pages_which_arent_in_db() -> None:
                 print(f"removed {path_object} because it's not in DB")
 
 
-def update_static_files():
-    updated = False
+def update_static_files() -> None:
     for f in Path("static").iterdir():
         if f.name == "robots.txt":
             public_path = Path(RENDERED_PUBLIC_FILES_PATH) / f.name
@@ -224,24 +248,27 @@ def update_static_files():
         try:
             with f.open() as fin, public_path.open() as public_fin:
                 if fin.read() != public_fin.read():
-                    updated = True
                     print(f"{f} has changed, copying to public folder.")
                     shutil.copy(f, public_path)
         except UnicodeDecodeError:
             with f.open("rb") as fin, public_path.open("rb") as public_fin:
                 if fin.read() != public_fin.read():
-                    updated = True
                     print(f"{f} has changed, copying to public folder.")
                     shutil.copy(f, public_path)
         except FileNotFoundError:
             print(f"{f} doesn't exist in public folder, copying it there.")
-            updated = True
             shutil.copy(f, public_path)
-    return updated
+
+
+
+def update_pages():
+    render_all_updated_pages()
+    render_toc()
+    update_sitemap()
 
 
 def update_everything():
-    updated = update_static_files()
+    update_static_files()
     render_all_updated_pages()
     remove_all_pages_which_arent_in_db()
     render_toc()

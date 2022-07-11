@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <title>{{ title }}</title>
   <meta name="description" content="{{ description }}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale={{ INITIAL_SCALE }}">
   <meta name="robots" content "index, follow">
 
   <meta property="og:title" content="{{ title }}">
@@ -16,4 +16,5 @@
   <link rel="stylesheet" href="/static/style.css">
   <meta name="theme-color" content="{{ THEME_COLOR }}">
   <link rel="canonical" href="{{ BASE_URL }}/{{ url }}" />
+  {% if DEV_MODE %}<script type="text/javascript" src="https://livejs.com/live.js"></script>{% endif %}
 </head>
