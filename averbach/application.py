@@ -1,11 +1,11 @@
 """
 the page model:
     url VARCHAR NOT NULL, 
-    page_type VARCHAR, 
-    title VARCHAR, 
+    page_type VARCHAR NOT NULL, 
+    title VARCHAR NOT NULL UNIQUE, 
     description VARCHAR,
     date INTEGER,
-    body VARCHAR, 
+    body VARCHAR NOT NULL, 
     PRIMARY KEY (url)
 """
 import logging

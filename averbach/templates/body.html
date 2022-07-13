@@ -1,8 +1,7 @@
 <body>
   {% include 'nav_0.0.1.html' %}
   {% if url not in ("toc", "about") %}
-    <h2 class="title">{{ title }}</h1>
-    {% if date is not none %}<p class="date">{{ date }}</p>{% else %}<p></p>{% endif %}
+    <h2 class="title">{{ title | title }}</h1>
   {% else %}
     <div class="extra-space"></div>
   {% endif %}

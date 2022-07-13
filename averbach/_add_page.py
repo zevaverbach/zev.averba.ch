@@ -10,8 +10,8 @@ VALID_ARGS_WITH_HYPHENS = [f"--{va}" for va in VALID_ARGS]
 args = {}
 if len(sys.argv) < 4:
     print("please provide some arguments")
-    print("they must include --url, --title, --date, and either --body or --path")
-    print("they can also include --page-type and/or --description")
+    print("they must include --url, --title, and either --body or --path")
+    print("they can also include --page-type, --date, and --description")
     sys.exit()
 
 for arg in sys.argv[1:]:
@@ -34,15 +34,14 @@ if "title" not in args:
 if "body" not in args and "path" not in args:
     print("please provide a body or a path")
     sys.exit()
-if "date" not in args:
-    print("please provide a date")
-    sys.exit()
 if "body" in args and "EQUALS" in args["body"]:
     args["body"] = args["body"].replace("EQUALS", "=")
 if "path" in args:
     path = args["path"]
     del args["path"]
-    args["body"] = pl.Path(path).read_text().replace("\n", "&#10;")
+    args["body"] = pl.Path(path).read_text().replace("\n", "&#10;").replace("'", "&apos;")
+
+args["title"] = args["title"].title()
 
 try:
     create_page(**args)

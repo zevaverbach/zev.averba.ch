@@ -1,20 +1,15 @@
 # TODO
 
-- [ ] tweak the font of the syntax highlighting, at least a bit smaller
-- [ ] titlecase the title 
-- [ ] make the line height taller for paragraphs
-- [ ] make the title blue in light mode
-- [ ] does syntax highlighting look good in light mode?
-- [ ] remove unused code and dependencies
-  - Flask is gone, for example
-- [ ] re-render requirements.txt
+- [ ] check mobile
 
 ## Content
 - [ ] add contact info to 'about'
 - [ ] bring content over from old site
 - [ ] add content from Twilio etc.
 - [ ] blog about what you know
+- [ ] blog about what the site is made of
 - [ ] blog about the things you've built, and maybe make pages for them
+- [ ] do something with pyscript where the beautiful "tokyo night" = Dank Mono code block is editable and executable??
 
 ### SEO
 - [ ] generate sitemap on every change and submit it to Google
@@ -23,8 +18,13 @@
   - [ ] first create internal links automatically
     - [https://moz.com/learn/seo/internal-link]
     - [ ] limit it to 150 links in a given page
-- [ ] web standard validator programmatically?
-- [ ] detect similar or duplicate pages and disallow it, it fucks up SEO
 - [ ] set other metas
   - html lang?
   - [optimize for crawlers](https://www.wordstream.com/blog/ws/2020/11/17/website-visibility)
+
+## Later
+- [ ] add an RSS feed
+- [ ] make the "copy" button on code blocks look much better
+- [ ] require "description"
+- [ ] use "description" in metadata for each page, as well as in tooltip on toc/
+- [ ] minimize the altered CSS and JS (PRism)
