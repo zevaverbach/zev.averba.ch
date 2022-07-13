@@ -13,11 +13,7 @@
 
 ### SEO
 - [ ] generate sitemap on every change and submit it to Google
-  - [ ] https://stackoverflow.com/a/13906868/4386191
-    - there's no limit to how often you re-submit it
-  - [ ] first create internal links automatically
-    - [https://moz.com/learn/seo/internal-link]
-    - [ ] limit it to 150 links in a given page
+  - www.google.com/webmasters/tools/ping?sitemap=sitemap_url (making sure to URL encode the sitemapUrl)
 - [ ] set other metas
   - html lang?
   - [optimize for crawlers](https://www.wordstream.com/blog/ws/2020/11/17/website-visibility)
@@ -28,3 +24,7 @@
 - [ ] require "description"
 - [ ] use "description" in metadata for each page, as well as in tooltip on toc/
 - [ ] minimize the altered CSS and JS (PRism)
+- [ ] download the webfonts instead of using Google's CDN?
+- [ ] create internal links automatically
+  - [https://moz.com/learn/seo/internal-link]
+  - [ ] limit it to 150 links in a given page
