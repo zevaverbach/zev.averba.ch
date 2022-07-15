@@ -8,7 +8,6 @@ the page model:
     body VARCHAR NOT NULL, 
     PRIMARY KEY (url)
 """
-import logging
 import os
 from pathlib import Path
 import shutil
@@ -16,9 +15,7 @@ from socket import gethostname
 import subprocess
 
 from dotenv import load_dotenv
-from flask import Flask, request
 from jinja2 import Environment, FileSystemLoader
-from rich import pretty
 
 from db import do_query
 
@@ -28,14 +25,15 @@ TABLE_NAME = "content"
 PAGE_TYPE_DEFAULT = "0.0.1"
 ENGINE = None
 BASE_URL = "https://zev.averba.ch"
-FATHOM_UID = "LWJFWQJS"
-THEME_COLOR = "#209cee"
-INITIAL_SCALE = 1.0
+local = False
+
 if gethostname() == "averbachs":
     RENDERED_PUBLIC_FILES_PATH = f"/var/www/{BASE_URL.split('/')[-1]}/html"
 else:
     # local on Mac
     RENDERED_PUBLIC_FILES_PATH = f"/Users/zev/{BASE_URL.split('/')[-1]}/html"
+    local = True
+    BASE_URL = ""
 
 
 class NoPages(Exception):
@@ -44,10 +42,11 @@ class NoPages(Exception):
 
 GLOBALS = dict(
     BASE_URL=BASE_URL,
-    THEME_COLOR=THEME_COLOR,
-    fathom_uid=FATHOM_UID,
     TABLE_NAME=TABLE_NAME,
-    INITIAL_SCALE=INITIAL_SCALE,
+    local=local,
+    fathom_uid = "LWJFWQJS",
+    THEME_COLOR = "#209cee",
+    INITIAL_SCALE = 1.0,
 )
 
 
@@ -173,4 +172,5 @@ def update_everything():
     render_all_updated_pages()
     remove_all_pages_which_arent_in_db()
     render_toc()
-    update_sitemap()
+    if not local:
+        update_sitemap()

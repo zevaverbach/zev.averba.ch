@@ -1,13 +1,13 @@
   <nav>
     <div id="logo">
-      <a href="{{ BASE_URL }}" class="logo">
+      <a href="{{ BASE_URL }}{% if local %}/about.html{% endif %}" class="logo">
         Zev Averbach{% if url not in ("about", "toc") %}:{% endif %}
       </a>
     </div>
       {% if url in ("about", "toc") %}
         <div class="nav"></div>
-        <div class="nav"><a id="about" href="/about" {% if url == 'about' %}class="active"{% endif %}>about</a></div>
-        <div class="nav"><a id="posts" href="/toc"{% if url == 'toc' %}class="active"{% endif %}>toc</a></div>
+        <div class="nav"><a id="about" href="/about{% if local %}.html{% endif %}" {% if url == 'about' %}class="active"{% endif %}>about</a></div>
+        <div class="nav"><a id="posts" href="/toc{% if local %}.html{% endif %}"{% if url == 'toc' %}class="active"{% endif %}>toc</a></div>
         <div class="nav"></div>
       {% endif %}
   </nav>

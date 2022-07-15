@@ -24,7 +24,7 @@
   {% for page in all_pages %}
     {% if page['url'] not in ('about', 'newsletter_signup') %}
     <div data-uid="{{ page['url'] }}" class="toc-row">
-      <a class="toc-date" href='{{ BASE_URL }}/{{ page["url"] }}'>{{ page['title'] }}</a>
+      <a class="toc-date" href='{{ BASE_URL }}/{{ page["url"] }}{% if local %}.html{% endif %}'>{{ page['title'] }}</a>
     </div>
     {% endif %}
   {% endfor %}

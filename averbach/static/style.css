@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&family=Roboto:wght@700&display=swap');
 @font-face{
   font-family: "Dank Mono";
-  src: url("./static/DankMono-Regular.ttf") format("truetype");
+  src: url("./DankMono-Regular.ttf") format("truetype");
 }
 
 :root {
@@ -9,6 +9,7 @@
   --my-black: #212121;
   --my-yellow: #fdfa72;
   --my-blue: dodgerblue;
+  --my-max-width: 896px;
 }
 
 html {
@@ -53,13 +54,6 @@ ul, ol, span {
 p { 
 	line-height: 1.6em;
 	margin-bottom: 1.5em;
-}
-
-input {
-  display: block;
-  padding: .2vw;
-  width: 20ch;
-  grid-column: 2;
 }
 
 *:focus {
@@ -116,9 +110,11 @@ nav a.active {
 }
 
 #body {
-  margin-top: 3em;
-  margin-left: 5vw;
-  width: 85vw;
+  /* margin-left: 5vw; */
+  /* width: 85vw; */
+  max-width: var(--my-max-width);
+  margin: 0 auto !important;
+
 }
 
 #body a {
@@ -130,10 +126,16 @@ nav a.active {
   color: var(--my-blue);
 }
 
+h2.title {
+  line-height: 1;
+}
+
 #logo, h2.title {
   grid-column: 1 / -1;
   text-align: center;
   font-weight: 700;
+  max-width: var(--my-max-width);
+  margin: 0 auto;
 }
 
 #logo {
@@ -143,7 +145,11 @@ nav a.active {
 
 h2.title {
   font-size: calc(1em + 1.8vw);
-  margin-bottom: .5em;
+}
+
+hr {
+  margin: .8em 0 .5em 0;
+  border-top: 2px black;
 }
 
 

@@ -1,11 +1,11 @@
 <body>
   {% include 'nav_0.0.1.html' %}
   {% if url not in ("toc", "about") %}
-    <h2 class="title">{{ title | title }}</h1>
+  <h2 class="title">{{ title | title }}<hr></h2>
   {% else %}
-    <div class="extra-space"></div>
+  <div class="extra-space"><hr></div>
   {% endif %}
-  <div id="body">
+  <div id="body" {% if url == 'about' %}class="about"{% endif %}>
     {{ body | safe }}
   </body>
   <script src="https://cdn.usefathom.com/script.js" data-site="{{ fathom_uid }}" defer></script>
